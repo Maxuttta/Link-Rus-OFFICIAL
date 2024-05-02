@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="link.download.ru">
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <permission android:name="com.example.myapp.MY_CUSTOM_PERMISSION"
+        android:protectionLevel="normal" />
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/logo_spring"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/logo_spring"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Link"
+        tools:targetApi="31">
+        <service
+            android:name=".MyService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="com.example.myapp.MY_CUSTOM_PERMISSION">
+            <intent-filter>
+                <action android:name="android.content.Intent.ACTION_START_SERVICE" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".profile"
+            android:exported="false" />
+        <activity
+            android:name=".successed_reg"
+            android:exported="false" />
+        <activity
+            android:name=".reg_id"
+            android:exported="false" />
+        <activity
+            android:name=".reg_password"
+            android:exported="false" />
+        <activity
+            android:name=".reg_username"
+            android:exported="false" />
+        <activity
+            android:name=".chat_list"
+            android:exported="false" />
+        <activity
+            android:name=".successedLogin"
+            android:exported="false" />
+        <activity
+            android:name=".pasword_activity"
+            android:exported="false" />
+        <activity
+            android:name=".Phone"
+            android:exported="false" />
+        <activity
+            android:name=".ChatWindow"
+            android:exported="false"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".hello"
+            android:exported="false"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".list_drawer"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Link">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="link.chats.ru" />
+            </intent-filter>
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN"/> -->
+            <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+            <!-- <category android:name="android.intent.category.BROWSABLE" /> -->
+
+
+            <!-- <data -->
+            <!-- android:host="www.linkyyy.com" -->
+            <!-- android:scheme="https" /> -->
+            <!-- <data -->
+            <!-- android:scheme="linkyyy" -->
+            <!-- android:host="start"/> -->
+            <!-- </intent-filter> -->
+        </activity>
+    </application>
+
+</manifest>

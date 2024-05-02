@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "603071834207",
+    "firebase_url": "https://link-e0553-default-rtdb.firebaseio.com",
+    "project_id": "link-e0553",
+    "storage_bucket": "link-e0553.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603071834207:android:d028204ecdc44ef2b0d3ea",
+        "android_client_info": {
+          "package_name": "com.example.link"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "603071834207-oknsivobq5n9669sbms22h6sd1l1mb5m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqnD0cuiV6VqZwbKqPejWKdm9i1uZvEjs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "603071834207-oknsivobq5n9669sbms22h6sd1l1mb5m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603071834207:android:d6e8c1a2df933d43b0d3ea",
+        "android_client_info": {
+          "package_name": "link.download.ru"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "603071834207-oknsivobq5n9669sbms22h6sd1l1mb5m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqnD0cuiV6VqZwbKqPejWKdm9i1uZvEjs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "603071834207-oknsivobq5n9669sbms22h6sd1l1mb5m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603071834207:android:c1d20cda5cbc140db0d3ea",
+        "android_client_info": {
+          "package_name": "link.download.ru"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "603071834207-oknsivobq5n9669sbms22h6sd1l1mb5m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqnD0cuiV6VqZwbKqPejWKdm9i1uZvEjs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "603071834207-oknsivobq5n9669sbms22h6sd1l1mb5m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

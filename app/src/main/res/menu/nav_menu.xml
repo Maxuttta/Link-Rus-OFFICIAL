@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group>
+        <item android:title="Создать группу"
+            android:id="@+id/addGroupe"/>
+        <item android:title="Настройки"
+            android:id="@+id/settings" />
+    </group>
+
+    <item android:title="О приложении"
+        android:id="@+id/about">
+        <menu>
+            <item android:title="Задать вопрос"
+                android:id="@+id/ask"/>
+        </menu>
+    </item>
+</menu>
