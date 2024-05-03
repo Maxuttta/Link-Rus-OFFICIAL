@@ -308,6 +308,7 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
                     avaChat.setBackgroundResource(R.drawable.saves_ava)
                     chatName.text = "Избранное"
                     coname = "Избранное"
+                    chatStatusText.visibility = View.GONE
                 }
                 else{
                     chatName.text = coname
@@ -317,6 +318,7 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
                 avaChat.setBackgroundResource(R.drawable.saves_ava)
                 chatName.text = "Избранное"
                 coname = "Избранное"
+                chatStatusText.visibility = View.GONE
 
             }
         }

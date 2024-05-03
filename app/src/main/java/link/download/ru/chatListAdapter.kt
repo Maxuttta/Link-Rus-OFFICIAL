@@ -60,7 +60,6 @@ class chatListAdapter(val listener:Listener): RecyclerView.Adapter<RecyclerView.
         holder.lastMessageText.maxLines = 1
         if (currentChat.nameOfChat == "Избранное"){
             holder.ava.setBackgroundResource(R.drawable.saves_ava)
-
         }
         if ((currentChat.pinnedMessage != "-") && (currentChat.isCalling != "active")){
             holder.extraText.text = "Прикрепленное сообщение:"

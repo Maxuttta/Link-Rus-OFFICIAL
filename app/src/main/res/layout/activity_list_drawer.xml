@@ -187,7 +187,7 @@
                         android:id="@+id/userAvatar"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
-                        android:background="@drawable/no_ava" />
+                        android:background="@drawable/no_ava_low" />
 
                 </androidx.cardview.widget.CardView>
 

@@ -99,7 +99,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
             loadChats()
             searchView()
             designAdapter()
-            menuButtonsAdapter()
+            menuAdapter()
             val intent = Intent(this@list_drawer, MyService::class.java)
             startForegroundService(intent)
 
@@ -109,8 +109,9 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
 //        Toast.makeText(this@list_drawer,"$isLog",Toast.LENGTH_SHORT).show()
     }
 
-    private fun menuButtonsAdapter() {
+    private fun menuAdapter() {
         binding.apply {
+            userName.text = name
             addGroupeButton.setOnClickListener{
 
             }
