@@ -28,7 +28,7 @@
                 android:id="@+id/userAva"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:background="@drawable/ava"/>
+                android:background="@drawable/no_ava"/>
         </androidx.cardview.widget.CardView>
 
         <TextView

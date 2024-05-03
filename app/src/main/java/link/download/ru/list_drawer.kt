@@ -130,7 +130,11 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
                     fadeRotate2.fillAfter = true
                     fadeOut.fillAfter = true
                     toTop1.fillAfter = true
+                    fadeIn.fillAfter = true
+                    toBottomFadeOut.fillAfter = false
                     searchEditText.visibility = View.VISIBLE
+                    constraintSearchList.visibility = View.VISIBLE
+                    chatRecyclerList.visibility = View.GONE
                     flowButton1.startAnimation(fadeRotate1)
                     flowButton1.setImageResource(R.drawable.baseline_close_24)
                     flowButton2.setImageResource(R.drawable.ic_menu_white)
@@ -138,7 +142,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
                     searchEditText.startAnimation(toTop1)
                     title1.startAnimation(fadeOut)
                     constraintSearchList.startAnimation(fadeIn)
-                    chatRecyclerList.startAnimation(toBottomFadeOut)
+                    chatRecyclerList.startAnimation(fadeOut)
                     isFlow = false
                     searchEditText.isEnabled = true
                 } else {
@@ -241,15 +245,20 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
                     fadeRotate2.fillAfter = true
                     fadeOut.fillAfter = true
                     toLeft1.fillAfter = true
+                    toBottomFadeOut.fillAfter = false
                     flowButton1.startAnimation(fadeRotate1)
                     flowButton1.setImageResource(R.drawable.ic_menu_white)
                     flowButton2.setImageResource(R.drawable.baseline_close_24)
                     flowButton2.startAnimation(fadeRotate2)
                     searchEditText.startAnimation(fadeOut)
                     searchEditText.visibility = View.INVISIBLE
-                    isFlow = true
+                    constraintSearchList.visibility = View.GONE
+                    chatRecyclerList.visibility = View.VISIBLE
+                    constraintSearchList.startAnimation(fadeOut)
+                    chatRecyclerList.startAnimation(fadeIn)
                     title1.startAnimation(toLeft1)
                     searchEditText.isEnabled = false
+                    isFlow = true
                 } else {
                     drawerlayout.toggleMenu()
                 }
