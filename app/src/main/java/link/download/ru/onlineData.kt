@@ -1,6 +1,6 @@
 package link.download.ru
 
-class onlineData{
+class OnlineData{
     var status: String? = null
     var time: String? = null
     constructor(status:String, time: String){

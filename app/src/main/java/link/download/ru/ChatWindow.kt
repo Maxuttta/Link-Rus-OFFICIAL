@@ -1,6 +1,5 @@
 package link.download.ru
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -8,29 +7,21 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.view.WindowInsetsController
-import android.view.animation.AccelerateDecelerateInterpolator
 import com.vanniktech.emoji.google.GoogleEmojiProvider
 import com.vanniktech.emoji.EmojiManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.PagerAdapter
-import androidx.viewpager2.widget.ViewPager2
 import link.download.ru.databinding.ActivityChatWindowBinding
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -38,10 +29,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import com.squareup.picasso.Picasso
 import com.vanniktech.emoji.EmojiPopup
 import java.io.ByteArrayOutputStream
@@ -51,8 +39,8 @@ import java.util.Calendar
 import java.util.Locale
 
 
-@Suppress("DEPRECATION")
-class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClickListener {
+@Suppress("DEPRECATION", "NAME_SHADOWING")
+class ChatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
     private lateinit var toLeft1: Animation
     private lateinit var toLeft2: Animation
     private lateinit var toRight1: Animation
@@ -63,17 +51,11 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
     private lateinit var fadeOut: Animation
     private lateinit var fadeIn: Animation
 
-    var a = 1
-    private var canLoadNewMessage = true
-
+    private var a = 1
 
     private lateinit var binding: ActivityChatWindowBinding
     private lateinit var adapter: MessageAdapter
-    private var isEmojiOpened = false
-    var chatIs = 0
-    var isEditing = 0
-    var isItemRemoved = false
-
+    private var isEditing = 0
 
     private var name = ""
     private var key = ""
@@ -81,51 +63,42 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
     private var cophone = ""
     private var phone = ""
 
-    var textCount = 0
+    private var textCount = 0
 
     private var counterOfMessages = ""
     private var messageId = 1
 
-    var you = ""
-    var nyou = ""
+    private var you = ""
 
     private var text = ""
     private var textCopy = ""
     private var time = ""
     private var messageType = ""
-    var fileUri: Uri? = null
-    var Uri = ""
+    private var uri = ""
 
-    var editingText = ""
-    var edId = ""
-    var delId = ""
-    var newEdText = ""
+    private var editingText = ""
+    private var edId = ""
+    private var delId = ""
+    private var newEdText = ""
 
-    private lateinit var viewPager: ViewPager2
+    private lateinit var childEventListener: ChildEventListener
 
-    lateinit var childEventListener: ChildEventListener
-
-    var chatId = ""
-    var isChat = ""
-    var listIs = 0
+    private var chatId = ""
+    private var isChat = ""
+    private var listIs = 0
     private var imagechoosen = false
 
     private lateinit var dbRef: DatabaseReference
     private lateinit var dbRef2: DatabaseReference
     private lateinit var dbRef3: DatabaseReference
 
-    private lateinit var storageReference: StorageReference
-    private lateinit var ref: StorageReference
-
-    val handler = android.os.Handler()
-
-    val db = Firebase.firestore
+    private val handler = android.os.Handler()
 
     private val getContent =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val selectedImageUri = result.data?.data
-                var image: ImageView = findViewById(R.id.subImage)
+                val image: ImageView = findViewById(R.id.subImage)
                 Picasso.get().load(selectedImageUri).into(image)
                 imagechoosen = true
             }
@@ -154,7 +127,7 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
-        var sharedPref = getSharedPreferences("login", Context.MODE_PRIVATE)
+        val sharedPref = getSharedPreferences("login", Context.MODE_PRIVATE)
         name = sharedPref.getString("name", "noNameError").toString()
 
         chaterId()
@@ -179,8 +152,6 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
                 super.onScrolled(recyclerView, dx, dy)
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                val visibleItemCount = layoutManager.childCount
-                val totalItemCount = layoutManager.itemCount
                 val isScrollingLeft = dx < 0 && firstVisibleItemPosition > 0
                 if (isScrollingLeft) {
                     finish()
@@ -193,11 +164,11 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
         val dbRef2 = FirebaseDatabase.getInstance().getReference("Users").child(cophone)
         dbRef2.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val data = snapshot.getValue(onlineData::class.java)
+                val data = snapshot.getValue(OnlineData::class.java)
 
                 if (data != null) {
                     val status = data.status
-                    val time = data.time
+//                    val time = data.time
 
                     if (status == "online") {
                         binding.chatStatusText.text = "В сети"
@@ -259,7 +230,7 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
     private fun back() {
         binding.apply {
             backButton.setOnClickListener {
-                val intent = Intent(this@ChatWindow, list_drawer::class.java)
+                val intent = Intent(this@ChatWindow, Listdrawer::class.java)
                 startActivity(intent)
                 overridePendingTransition(R.anim.from_right, R.anim.to_right)
                 finish()
@@ -324,12 +295,12 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
         }
     }
 
-    fun containsEmojis(text: String): Boolean {
+    private fun containsEmojis(text: String): Boolean {
         val regex = "[\\uD83C-\\uDBFF\\uDC00-\\uDFFF]+".toRegex()
         return regex.containsMatchIn(text)
     }
 
-    fun generateRandomString(): String {
+    private fun generateRandomString(): String {
         return "image${System.currentTimeMillis()}.jpg"
     }
 
@@ -338,7 +309,7 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
         binding.apply {
             editText.setOnClickListener {
                 binding.messageChatList.scrollToPosition(
-                    binding.messageChatList.getAdapter()!!.getItemCount() - 1
+                    binding.messageChatList.adapter!!.itemCount - 1
                 )
             }
             send.setOnClickListener {
@@ -369,7 +340,7 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
                     }
                 } else {
                     binding.messageChatList.scrollToPosition(
-                        binding.messageChatList.getAdapter()!!.getItemCount() - 1
+                        binding.messageChatList.adapter!!.itemCount - 1
                     )
                     dbRef = FirebaseDatabase.getInstance().getReference("Chats")
                     dbRef2 = FirebaseDatabase.getInstance().getReference("UserChats")
@@ -382,10 +353,10 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
                         editText.setText("")
                         counterOfMessages = System.currentTimeMillis().toString()
                         val containsEmojis = containsEmojis(text)
-                        if ((text.length == 2) && (containsEmojis == true)) {
-                            messageType = "emoji"
+                        messageType = if ((text.length == 2) && containsEmojis) {
+                            "emoji"
                         } else {
-                            messageType = "text"
+                            "text"
                         }
 
                         val mapa = hashMapOf<String, Any>(
@@ -394,7 +365,7 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
                             "time" to time,
                             "userId" to you,
                             "messageType" to messageType,
-                            "pictureUrl" to Uri
+                            "pictureUrl" to uri
                         )
                         val chatData = hashMapOf(
                             "id" to key,
@@ -449,7 +420,7 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
                         counterOfMessages = System.currentTimeMillis().toString()
 
                         val bitmap = (subImage.drawable as BitmapDrawable).bitmap
-                        var nameofimg = generateRandomString()
+                        val nameofimg = generateRandomString()
                         val storageRef =
                             FirebaseStorage.getInstance().reference.child("Images/$nameofimg")
                         val baos = ByteArrayOutputStream()
@@ -473,13 +444,13 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
                             "time" to time,
                             "userId" to you,
                             "messageType" to messageType,
-                            "pictureUrl" to "$nameofimg"
+                            "pictureUrl" to nameofimg
                         )
                         dbRef = FirebaseDatabase.getInstance().getReference("Chats")
                         dbRef.child(chatId).child(counterOfMessages)
                             .updateChildren(mapa)
                             .addOnSuccessListener {
-                                Uri = ""
+                                uri = ""
                             }.addOnFailureListener {
                                 //не отправлено
                             }
@@ -497,7 +468,7 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
                 1 -> {
                     adapter.updateItem(snapshot.getMessageModel())
                     binding.messageChatList.scrollToPosition(
-                        binding.messageChatList.getAdapter()!!.getItemCount() - 1
+                        binding.messageChatList.adapter!!.itemCount - 1
                     )
                     messageId++
                 }
@@ -505,7 +476,7 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
                 2 -> {
                     adapter.updateItem(snapshot.getMessageModel())
                     binding.messageChatList.scrollToPosition(
-                        binding.messageChatList.getAdapter()!!.getItemCount() - 1
+                        binding.messageChatList.adapter!!.itemCount - 1
                     )
                     messageId++
                 }
@@ -521,30 +492,13 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
         dbRef.addChildEventListener(childEventListener)
     }
 
-    override fun onDeleteClicked(position: Int, message: message) {
+    override fun onDeleteClicked(position: Int, message: Message) {
         delId = message.messageId.toString()
         dbRef = FirebaseDatabase.getInstance().getReference("Chats")
         dbRef.child(chatId).child(delId).removeValue()
             .addOnSuccessListener {
             }
     }
-
-
-    private fun messageIdSend() {
-        when (messageId.toString().length) {
-            1 -> counterOfMessages = "000000000$messageId"
-            2 -> counterOfMessages = "00000000$messageId"
-            3 -> counterOfMessages = "0000000$messageId"
-            4 -> counterOfMessages = "000000$messageId"
-            5 -> counterOfMessages = "00000$messageId"
-            6 -> counterOfMessages = "0000$messageId"
-            7 -> counterOfMessages = "000$messageId"
-            8 -> counterOfMessages = "00$messageId"
-            9 -> counterOfMessages = "0$messageId"
-            10 -> counterOfMessages = "$messageId"
-        }
-    }
-
     private fun cancelEditingMessage() {
         binding.apply {
             cancelEditMessage.setOnClickListener {
@@ -563,7 +517,7 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
     override fun onBackPressed() {
         super.onBackPressed()
         listIs = 1
-        val intent = Intent(this@ChatWindow, list_drawer::class.java)
+        val intent = Intent(this@ChatWindow, Listdrawer::class.java)
         startActivity(intent)
         overridePendingTransition(R.anim.from_right, R.anim.to_right)
         finish()
@@ -604,7 +558,7 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
     }
 
 
-    override fun onEditClicked(position: Int, message: message) {
+    override fun onEditClicked(position: Int, message: Message) {
         binding.apply {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             editText2.requestFocus()
@@ -633,7 +587,7 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
         }
     }
 
-    override fun onCopyClicked(position: Int, message: message) {
+    override fun onCopyClicked(position: Int, message: Message) {
         textCopy = message.title.toString()
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("text", textCopy)

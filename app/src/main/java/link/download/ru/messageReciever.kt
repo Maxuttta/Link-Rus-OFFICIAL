@@ -1,6 +1,5 @@
 package link.download.ru
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
@@ -17,7 +16,6 @@ import com.google.firebase.database.FirebaseDatabase
 
 class messageReciever : BroadcastReceiver() {
     private lateinit var notificationManager: NotificationManager
-    private lateinit var builder: Notification.Builder
     private var phone = ""
     private lateinit var dbRef: DatabaseReference
     private val channelId = "i.apps.notifications"
@@ -25,7 +23,7 @@ class messageReciever : BroadcastReceiver() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context?, intent: Intent?) {
         notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        createNotificationChannel(context, channelId, "Сообщения одиночных чатов", "nMC")
+        createNotificationChannel(channelId, "Сообщения одиночных чатов", "nMC")
         val sharedPref = context.getSharedPreferences("login", Context.MODE_PRIVATE)
         phone = sharedPref.getString("phone", "-") ?: ""
         dbRef = FirebaseDatabase.getInstance().getReference("UserNotifications")
@@ -54,7 +52,11 @@ class messageReciever : BroadcastReceiver() {
         })
     }
 
-    private fun createNotificationChannel(context: Context, channelId: String, channelName: String, channelDescription: String) {
+    private fun createNotificationChannel(
+        channelId: String,
+        channelName: String,
+        channelDescription: String
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(channelId, channelName, importance).apply {

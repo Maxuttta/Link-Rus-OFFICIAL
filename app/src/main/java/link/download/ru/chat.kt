@@ -1,6 +1,6 @@
 package link.download.ru
 
-public class chat{
+class Chat{
     var id:String? = null
     var nameOfChat: String? = null
     var avaUrl:String? = null

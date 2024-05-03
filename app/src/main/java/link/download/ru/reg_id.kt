@@ -2,22 +2,19 @@ package link.download.ru
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import link.download.ru.databinding.ActivityRegIdBinding
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import link.download.ru.databinding.ActivityRegIdBinding
 
-class reg_id : AppCompatActivity() {
+@Suppress("DEPRECATION")
+class Regid : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegIdBinding
-
-    private val db = Firebase.firestore
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,24 +31,24 @@ class reg_id : AppCompatActivity() {
             next.setOnClickListener {
                 if ((IdEditText.text.toString() == "") || (IdEditText.text.length < 3)) {
                     if (IdEditText.text.toString() == "") {
-                        Toast.makeText(this@reg_id, "Заполните поле ввода", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@Regid, "Заполните поле ввода", Toast.LENGTH_SHORT).show()
                     }
                     else {
-                        Toast.makeText(this@reg_id, "Слишком короткий ID \n Минимальная длина - 3", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@Regid, "Слишком короткий ID \n Минимальная длина - 3", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     val id = IdEditText.text.toString()
                     var count = 0
 
                     val sharedPref2 = getSharedPreferences("login", Context.MODE_PRIVATE)
-                    var num = sharedPref2.getString("phone", "noPhone").toString()
+                    val num = sharedPref2.getString("phone", "noPhone").toString()
 
                     val dbRef = FirebaseDatabase.getInstance().getReference("Users").child("7$num")
                     dbRef.addValueEventListener(object: ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
-                            var data = snapshot.getValue(UserData::class.java)
+                            val data = snapshot.getValue(UserData::class.java)
                             if (data != null){
-                                var checkId= data.password
+                                val checkId= data.password
                                 if (checkId == id){
                                     count = 1
                                 }
@@ -65,13 +62,13 @@ class reg_id : AppCompatActivity() {
                     if (count != 1){
                         val sharedPref = getSharedPreferences("login", Context.MODE_PRIVATE).edit()
                         sharedPref.putString("id", id).apply()
-                        val intent = Intent(this@reg_id, successed_reg::class.java)
+                        val intent = Intent(this@Regid, Successed_reg::class.java)
                         startActivity(intent)
                         overridePendingTransition(R.anim.from_left, R.anim.to_left)
                         finish()
                     }
                     else {
-                        Toast.makeText(this@reg_id, "ID занят", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@Regid, "ID занят", Toast.LENGTH_SHORT).show()
                     }
 //                    docRef.get()
 //                        .addOnSuccessListener { documents ->

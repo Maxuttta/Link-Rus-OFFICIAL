@@ -8,24 +8,18 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.getValue
-import java.util.jar.Attributes.Name
 
 @Suppress("DEPRECATION")
 class MyService : Service() {
     var id = ""
-    val handler = Handler(Looper.getMainLooper())
 
     lateinit var notificationManager: NotificationManager
     lateinit var builder: Notification.Builder
@@ -52,7 +46,7 @@ class MyService : Service() {
     fun buildNotification(context: Context?){
 
         notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        createNotificationChannel(context, channelId, "Сообщения одиночных чатов", "nMC")
+        createNotificationChannel(channelId, "Сообщения одиночных чатов", "nMC")
         val sharedPref = context.getSharedPreferences("login", Context.MODE_PRIVATE)
         phone = sharedPref.getString("phone", "-").toString()
         dbRef = FirebaseDatabase.getInstance().getReference("UserNotifications")
@@ -69,7 +63,7 @@ class MyService : Service() {
                 val name = data!!.notname
                 val title = data.nottitle
                 val phone2 = data.phone
-                val cophone = data.cophone
+                data.cophone
                 Log.d("202012","$name")
                 
                 if (phone == phone2){
@@ -109,7 +103,11 @@ class MyService : Service() {
         startForeground(1, builder.build())
     }
 
-    private fun createNotificationChannel(context: Context, channelId: String, channelName: String, channelDescription: String) {
+    private fun createNotificationChannel(
+        channelId: String,
+        channelName: String,
+        channelDescription: String
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(channelId, channelName, importance).apply {

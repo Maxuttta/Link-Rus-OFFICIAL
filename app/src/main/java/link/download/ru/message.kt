@@ -1,10 +1,9 @@
 package link.download.ru
-
-public class message{
+class Message{
     var title: String? = null
-    var time:String? = null
-    var userId:String? = null
-    var pictureUrl:String? = null
+    var time: String? = null
+    var userId: String? = null
+    var pictureUrl: String? = null
     var messageId: String? = null
     var messageType: String? = null
     constructor(title: String, time: String, userId: String, messageId: String, messageType: String, pictureUrl: String)

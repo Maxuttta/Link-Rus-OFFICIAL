@@ -11,21 +11,17 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import link.download.ru.databinding.ActivityPhoneBinding
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import link.download.ru.databinding.ActivityPhoneBinding
 
 
+@Suppress("DEPRECATION", "NAME_SHADOWING")
 class Phone : AppCompatActivity() {
 
     private lateinit var binding: ActivityPhoneBinding
 
     var text = ""
-    var     number = ""
-
-    val db = Firebase.firestore
-
+    private var number = ""
 
     @SuppressLint("CommitPrefEdits")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +60,7 @@ class Phone : AppCompatActivity() {
 
                         dbRef2.get().addOnSuccessListener {snapshot ->
                             val data = snapshot.getValue(UserData::class.java)
-                            val id = data?.Id
+                            val id = data?.id
                             val pas = data?.password
                             val name = data?.name
                             val phone = data?.phone
@@ -76,7 +72,7 @@ class Phone : AppCompatActivity() {
                             sharedPref.putString("name", name).apply()
                             if (pas != null) {
                                 if (pas.isNotEmpty()) {
-                                    val intent = Intent(this@Phone, pasword_activity::class.java)
+                                    val intent = Intent(this@Phone, Pasword_activity::class.java)
                                     startActivity(intent)
                                     overridePendingTransition(
                                         R.anim.from_left,
@@ -88,7 +84,7 @@ class Phone : AppCompatActivity() {
                             else{
                                 val sharedPref = getSharedPreferences("login", Context.MODE_PRIVATE).edit()
                                 sharedPref.putString("phone", number).apply()
-                                val intent = Intent(this@Phone, reg_username::class.java)
+                                val intent = Intent(this@Phone, Reg_username::class.java)
                                 startActivity(intent)
                                 overridePendingTransition(R.anim.from_left, R.anim.to_left)
                                 finish()

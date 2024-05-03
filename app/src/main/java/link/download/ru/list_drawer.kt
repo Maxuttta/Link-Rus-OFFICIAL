@@ -1,8 +1,6 @@
 package link.download.ru
 
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -18,26 +16,23 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import link.download.ru.databinding.ActivityListDrawerBinding
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.mxn.soul.flowingdrawer_core.ElasticDrawer
+import link.download.ru.databinding.ActivityListDrawerBinding
 
 
-@Suppress("DEPRECATION", "NAME_SHADOWING")
-class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
+@Suppress("DEPRECATION")
+class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
     private lateinit var binding: ActivityListDrawerBinding
     private val adapter = chatListAdapter(this)
 
 //    var newList:MutableList<chat> = mutableListOf()
 //    var old:MutableList<chat> = mutableListOf<chat>()
 
-    private val db = Firebase.firestore
     private lateinit var dbRef: DatabaseReference
     private lateinit var childEventListener: ChildEventListener
 
@@ -47,7 +42,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
     var phone = ""
 
     private var c = "false"
-    var chatIs = 0
+    private var chatIs = 0
 
     private lateinit var toLeft1: Animation
     private lateinit var toLeft2: Animation
@@ -91,7 +86,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
         binding.flowButton1.setImageResource(R.drawable.ic_menu_white)
 
         if (isLog == "false") {
-            val intent = Intent(this@list_drawer, hello::class.java)
+            val intent = Intent(this@Listdrawer, Hello::class.java)
             startActivity(intent)
             finish()
         } else {
@@ -100,7 +95,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
             searchView()
             designAdapter()
             menuAdapter()
-            val intent = Intent(this@list_drawer, MyService::class.java)
+            val intent = Intent(this@Listdrawer, MyService::class.java)
             startForegroundService(intent)
 
 
@@ -130,7 +125,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
                 sharedPref.putString("chatName", coname).apply()
                 sharedPref.putString("chatPhone", cophone).apply()
                 sharedPref.putString("chatKey", key).apply()
-                val intent = Intent(this@list_drawer, ChatWindow::class.java)
+                val intent = Intent(this@Listdrawer, ChatWindow::class.java)
                 startActivity(intent)
                 overridePendingTransition(R.anim.from_left, R.anim.to_left)
             }
@@ -138,10 +133,8 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
     }
 
     private fun designAdapter() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor = ContextCompat.getColor(this, android.R.color.transparent)
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        }
+        window.statusBarColor = ContextCompat.getColor(this, android.R.color.transparent)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.setDecorFitsSystemWindows(false)
             val controller = window.insetsController
@@ -188,12 +181,12 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
                                 snapshot: DataSnapshot,
                                 previousChildName: String?
                             ) {
-                                var data = snapshot.getValue(UserData::class.java)
+                                val data = snapshot.getValue(UserData::class.java)
                                 if (data != null) {
-                                    val i = data.Id
+                                    val i = data.id
                                     if (searchForChat == i) {
                                         val name = data.name
-                                        val key = data.Id
+                                        val key = data.id
                                         val phone = data.phone
                                         val sharedPref = getSharedPreferences(
                                             "chatInfo",
@@ -205,7 +198,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
                                         sharedPref.putString("key", key).apply()
 
                                         val intent =
-                                            Intent(this@list_drawer, ChatWindow::class.java)
+                                            Intent(this@Listdrawer, ChatWindow::class.java)
                                         startActivity(intent)
                                         overridePendingTransition(R.anim.from_left, R.anim.to_left)
                                     }
@@ -321,7 +314,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
     }
 
     private fun loadChats() {
-        binding.chatRecyclerList.layoutManager = LinearLayoutManager(this@list_drawer)
+        binding.chatRecyclerList.layoutManager = LinearLayoutManager(this@Listdrawer)
         binding.chatRecyclerList.adapter = adapter
 
         dbRef = FirebaseDatabase.getInstance().getReference("UserChats").child(phone)
@@ -362,6 +355,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
         })
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         super.onBackPressed()
         if (binding.drawerlayout.isMenuVisible) {
@@ -390,7 +384,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
         }
     }
 
-    override fun onClick(chat: chat) {
+    override fun onClick(chat: Chat) {
         val key = chat.id
         val cophone = chat.phone
         val coname = chat.name
@@ -400,7 +394,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
         sharedPref.putString("chatName", coname).apply()
         sharedPref.putString("chatPhone", cophone).apply()
         sharedPref.putString("chatKey", key).apply()
-        val intent = Intent(this@list_drawer, ChatWindow::class.java)
+        val intent = Intent(this@Listdrawer, ChatWindow::class.java)
         startActivity(intent)
         overridePendingTransition(R.anim.from_left, R.anim.to_left)
     }
@@ -421,14 +415,14 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
     override fun onStop() {
         val sharedPre = getSharedPreferences("system", Context.MODE_PRIVATE)
         c = sharedPre.getString("isNotification", "-").toString()
-        if (c == "true"){
-        }
-        if (c == "false"){
-//            val intent = Intent(this@list_drawer, MyService::class.java)
-//            startForegroundService(intent)
-//            val sharedPref = getSharedPreferences("system", Context.MODE_PRIVATE).edit()
-//            sharedPref.putString("isNotification", "true").apply()
-        }
+//        if (c == "true"){
+//        }
+//        if (c == "false"){
+////            val intent = Intent(this@list_drawer, MyService::class.java)
+////            startForegroundService(intent)
+////            val sharedPref = getSharedPreferences("system", Context.MODE_PRIVATE).edit()
+////            sharedPref.putString("isNotification", "true").apply()
+//        }
         super.onStop()
 
         if (chatIs == 1) {

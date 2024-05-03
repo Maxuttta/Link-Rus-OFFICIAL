@@ -1,7 +1,7 @@
 package link.download.ru
 
 class UserData {
-    var Id: String? = null
+    var id: String? = null
     var icon: String? = null
     var name: String? = null
     var password: String? = null
@@ -12,10 +12,10 @@ class UserData {
     var nottitle: String? = null
     var cophone: String? = null
 
-    constructor(Id:String, icon: String, name: String
+    constructor(id:String, icon: String, name: String
                 , password: String, phone: String, status: String
                 , time: String, notname: String, nottitle: String, cophone: String){
-        this.Id = Id
+        this.id = id
         this.icon = icon
         this.name = name
         this.password = password

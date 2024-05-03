@@ -9,12 +9,10 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-@Suppress("UNCHECKED_CAST")
-class successed_reg : AppCompatActivity() {
+@Suppress("UNCHECKED_CAST", "DEPRECATION")
+class Successed_reg : AppCompatActivity() {
 
     private lateinit var binding: ActivitySuccessedRegBinding
-
-    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +54,7 @@ class successed_reg : AppCompatActivity() {
                 val dbRef = FirebaseDatabase.getInstance().getReference("Users")
                 dbRef.child("7$phone").updateChildren(userData as Map<String, Any>)
 
-                val intent = Intent(this@successed_reg, list_drawer::class.java)
+                val intent = Intent(this@Successed_reg, Listdrawer::class.java)
                 startActivity(intent)
                 overridePendingTransition(R.anim.from_left, R.anim.to_left)
                 finish()

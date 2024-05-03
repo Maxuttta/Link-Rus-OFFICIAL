@@ -3,8 +3,8 @@ package link.download.ru
 import androidx.recyclerview.widget.DiffUtil
 
 class DiffUtilCallback(
-    val oldList: List<message>,
-    val newList: List<message>
+    private val oldList: List<Message>,
+    private val newList: List<Message>
 ) : DiffUtil.Callback() {
     override fun getOldListSize(): Int {
         return oldList.size

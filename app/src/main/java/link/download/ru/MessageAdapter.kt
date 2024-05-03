@@ -1,6 +1,5 @@
 package link.download.ru
 
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,18 +14,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
-class MessageAdapter(val context: Context, val a: String, private val listener: ItemClickListener) :
+@Suppress("NAME_SHADOWING")
+class MessageAdapter(val context: Context, private val a: String, private val listener: ItemClickListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    var messageList = mutableListOf<message>()
-    val ITEM_FROM = 2
-    val ITEM_TO = 1
+    private var messageList = mutableListOf<Message>()
+    private val ITEM_FROM = 2
+    private val ITEM_TO = 1
 
-    lateinit var mDiffResult: DiffUtil.DiffResult
+    private lateinit var mDiffResult: DiffUtil.DiffResult
 
     class MessageToHolder(itemView: View) : RecyclerView.ViewHolder(itemView),View.OnClickListener {
         val text = itemView.findViewById<TextView>(R.id.messageTo)
@@ -99,8 +96,8 @@ class MessageAdapter(val context: Context, val a: String, private val listener: 
         }
         val currentMessage = messageList[position]
 
-        if (holder.javaClass == MessageAdapter.MessageToHolder::class.java) {
-            val holder = holder as MessageAdapter.MessageToHolder
+        if (holder.javaClass == MessageToHolder::class.java) {
+            val holder = holder as MessageToHolder
 //            ioScope.launch {
                 val storage = FirebaseStorage.getInstance()
                 val storageRef = storage.reference.child("Images/${currentMessage.pictureUrl}")
@@ -125,7 +122,7 @@ class MessageAdapter(val context: Context, val a: String, private val listener: 
                 holder.card.setBackgroundResource(R.color.invisible)
             }
         } else {
-            val holder = holder as MessageAdapter.MessageFromHolder
+            val holder = holder as MessageFromHolder
 //            ioScope.launch {
                 val storage = FirebaseStorage.getInstance()
                 val storageRef = storage.reference.child("Images/${currentMessage.pictureUrl}")
@@ -158,8 +155,8 @@ class MessageAdapter(val context: Context, val a: String, private val listener: 
         return messageList.size
     }
 
-    fun addItem(item: message) {
-        val newList = mutableListOf<message>()
+    fun addItem(item: Message) {
+        val newList = mutableListOf<Message>()
         newList.addAll(messageList)
         newList.add(item)
         mDiffResult = DiffUtil.calculateDiff(DiffUtilCallback(messageList, newList))
@@ -167,10 +164,10 @@ class MessageAdapter(val context: Context, val a: String, private val listener: 
         messageList = newList
     }
 
-    fun updateItem(item: message) {
+    fun updateItem(item: Message) {
         val index = messageList.indexOfFirst { it.messageId == item.messageId }
         if (index != -1) {
-            val newList = mutableListOf<message>()
+            val newList = mutableListOf<Message>()
             newList.addAll(messageList)
             newList[index] = item
             mDiffResult = DiffUtil.calculateDiff(DiffUtilCallback(messageList, newList))
@@ -181,7 +178,7 @@ class MessageAdapter(val context: Context, val a: String, private val listener: 
         }
     }
 
-    fun removeItem(item: message) {
+    fun removeItem(item: Message) {
         val index = messageList.indexOfFirst { it.messageId == item.messageId }
         messageList.removeAt(index)
         notifyItemRemoved(index)
@@ -240,12 +237,12 @@ class MessageAdapter(val context: Context, val a: String, private val listener: 
         }
     }
     interface ItemClickListener {
-        fun onDeleteClicked(position: Int, message: message)
-        fun onEditClicked(position: Int, message: message)
-        fun onCopyClicked(position: Int, message: message)
+        fun onDeleteClicked(position: Int, message: Message)
+        fun onEditClicked(position: Int, message: Message)
+        fun onCopyClicked(position: Int, message: Message)
     }
 
     interface Listener{
-        fun onClick(message: message)
+        fun onClick(message: Message)
     }
 }

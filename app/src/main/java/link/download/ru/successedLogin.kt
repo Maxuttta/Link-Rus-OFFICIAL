@@ -2,18 +2,14 @@ package link.download.ru
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import link.download.ru.databinding.ActivitySuccessedLoginBinding
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 @Suppress("DEPRECATION")
-class successedLogin : AppCompatActivity() {
+class SuccessedLogin : AppCompatActivity() {
 
     private lateinit var binding: ActivitySuccessedLoginBinding
-
-    private val db = Firebase.firestore
 
     var name = "errorSL"
     var id = ""
@@ -26,7 +22,7 @@ class successedLogin : AppCompatActivity() {
             next.setOnClickListener {
                 val sharedPref2 = getSharedPreferences("login", Context.MODE_PRIVATE).edit()
                 sharedPref2.putString("isLog", "true").apply()
-                val intent = Intent(this@successedLogin, list_drawer::class.java)
+                val intent = Intent(this@SuccessedLogin, Listdrawer::class.java)
                 startActivity(intent)
                 overridePendingTransition(R.anim.from_left, R.anim.to_left)
                 finish()

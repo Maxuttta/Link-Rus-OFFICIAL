@@ -16,7 +16,7 @@ import link.download.ru.databinding.UserChatItemBinding
 
 @Suppress("NAME_SHADOWING")
 class chatListAdapter(val listener:Listener): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
-    var chatList = mutableListOf<chat>()
+    var chatList = mutableListOf<Chat>()
 
     lateinit var mDiffResult: DiffUtil.DiffResult
 
@@ -31,7 +31,7 @@ class chatListAdapter(val listener:Listener): RecyclerView.Adapter<RecyclerView.
         val context = itemView.findViewById<TextView>(R.id.context)
         val extraImage = itemView.findViewById<ImageView>(R.id.extraImage)
         val ava = item.findViewById<ImageView>(R.id.userAva)
-        fun bind(chat:chat, listener: Listener) = with(binding) {
+        fun bind(chat:Chat, listener: Listener) = with(binding) {
             itemView.setOnClickListener{
                 listener.onClick(chat)
             }
@@ -83,22 +83,22 @@ class chatListAdapter(val listener:Listener): RecyclerView.Adapter<RecyclerView.
 //        chatList.add(chat)
 //        notifyDataSetChanged()
 //    }
-    fun addChat(item: chat){
-        val newList = mutableListOf<chat>()
+    fun addChat(item: Chat){
+        val newList = mutableListOf<Chat>()
         newList.addAll(chatList)
         newList.add(item)
-        mDiffResult = DiffUtil.calculateDiff(chatDiffUtil(chatList, newList))
+        mDiffResult = DiffUtil.calculateDiff(ChatDiffUtil(chatList, newList))
         mDiffResult.dispatchUpdatesTo(this)
         chatList = newList
 }
 
-    fun updateItem(item: chat) {
+    fun updateItem(item: Chat) {
         val index = chatList.indexOfFirst { it.id == item.id }
         if (index != -1) {
-            val newList = mutableListOf<chat>()
+            val newList = mutableListOf<Chat>()
             newList.addAll(chatList)
             newList[index] = item
-            mDiffResult = DiffUtil.calculateDiff(chatDiffUtil(chatList, newList))
+            mDiffResult = DiffUtil.calculateDiff(ChatDiffUtil(chatList, newList))
             mDiffResult.dispatchUpdatesTo(this)
             chatList = newList
         } else {
@@ -106,7 +106,7 @@ class chatListAdapter(val listener:Listener): RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    fun removeItem(item: chat) {
+    fun removeItem(item: Chat) {
         val index = chatList.indexOfFirst { it.id == item.id }
         chatList.removeAt(index)
         notifyItemRemoved(index)
@@ -114,7 +114,7 @@ class chatListAdapter(val listener:Listener): RecyclerView.Adapter<RecyclerView.
     }
 
     interface Listener{
-        fun onClick(chat: chat)
+        fun onClick(chat: Chat)
     }
 
 }
