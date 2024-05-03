@@ -56,6 +56,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
     private lateinit var toTop1: Animation
     private lateinit var fadeOut: Animation
     private lateinit var fadeIn: Animation
+    private lateinit var toBottomFadeOut: Animation
 
 
     private var isFlow = true
@@ -78,6 +79,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
         toTop1 = AnimationUtils.loadAnimation(this, R.anim.to_top1)
         fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
         fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
+        toBottomFadeOut = AnimationUtils.loadAnimation(this, R.anim.to_bottom_fade_out)
 
         val sharedPref = getSharedPreferences("login", Context.MODE_PRIVATE)
 
@@ -135,6 +137,8 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
                     flowButton2.startAnimation(fadeRotate2)
                     searchEditText.startAnimation(toTop1)
                     title1.startAnimation(fadeOut)
+                    constraintSearchList.startAnimation(fadeIn)
+                    chatRecyclerList.startAnimation(toBottomFadeOut)
                     isFlow = false
                     searchEditText.isEnabled = true
                 } else {
