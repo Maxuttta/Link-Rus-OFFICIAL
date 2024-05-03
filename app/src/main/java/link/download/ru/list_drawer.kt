@@ -99,6 +99,7 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
             loadChats()
             searchView()
             designAdapter()
+            menuButtonsAdapter()
             val intent = Intent(this@list_drawer, MyService::class.java)
             startForegroundService(intent)
 
@@ -106,6 +107,33 @@ class list_drawer : AppCompatActivity(), chatListAdapter.Listener {
 
         }
 //        Toast.makeText(this@list_drawer,"$isLog",Toast.LENGTH_SHORT).show()
+    }
+
+    private fun menuButtonsAdapter() {
+        binding.apply {
+            addGroupeButton.setOnClickListener{
+
+            }
+            contactButton.setOnClickListener {
+
+            }
+            settingsButton.setOnClickListener {
+
+            }
+            savedButton.setOnClickListener {
+                val key = id
+                val cophone = phone
+                val coname = name
+                chatIs = 1
+                val sharedPref = getSharedPreferences("chatInfo", Context.MODE_PRIVATE).edit()
+                sharedPref.putString("chatName", coname).apply()
+                sharedPref.putString("chatPhone", cophone).apply()
+                sharedPref.putString("chatKey", key).apply()
+                val intent = Intent(this@list_drawer, ChatWindow::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.from_left, R.anim.to_left)
+            }
+        }
     }
 
     private fun designAdapter() {

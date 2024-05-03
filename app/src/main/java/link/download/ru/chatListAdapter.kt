@@ -1,5 +1,6 @@
 package link.download.ru
 
+import android.annotation.SuppressLint
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import link.download.ru.databinding.UserChatItemBinding
@@ -24,10 +26,11 @@ class chatListAdapter(val listener:Listener): RecyclerView.Adapter<RecyclerView.
         val lastMessageText = itemView.findViewById<TextView>(R.id.lastMessage)
         val lastMessageTime = itemView.findViewById<TextView>(R.id.lastMessageTime)
         val extraCard = itemView.findViewById<CardView>(R.id.extraCard)
+        val avaCard = itemView.findViewById<CardView>(R.id.cardView4)
         val extraText = itemView.findViewById<TextView>(R.id.extraText)
         val context = itemView.findViewById<TextView>(R.id.context)
         val extraImage = itemView.findViewById<ImageView>(R.id.extraImage)
-
+        val ava = item.findViewById<ImageView>(R.id.userAva)
         fun bind(chat:chat, listener: Listener) = with(binding) {
             itemView.setOnClickListener{
                 listener.onClick(chat)
@@ -44,6 +47,7 @@ class chatListAdapter(val listener:Listener): RecyclerView.Adapter<RecyclerView.
         return chatList.size
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val holder = holder as ChatHolder
         holder.bind(chatList[position], listener)
@@ -54,6 +58,10 @@ class chatListAdapter(val listener:Listener): RecyclerView.Adapter<RecyclerView.
         holder.lastMessageText.text = currentChat.lastMessage
         holder.lastMessageText.ellipsize = TextUtils.TruncateAt.END
         holder.lastMessageText.maxLines = 1
+        if (currentChat.nameOfChat == "Избранное"){
+            holder.ava.setBackgroundResource(R.drawable.saves_ava)
+
+        }
         if ((currentChat.pinnedMessage != "-") && (currentChat.isCalling != "active")){
             holder.extraText.text = "Прикрепленное сообщение:"
             holder.extraCard.visibility = View.VISIBLE

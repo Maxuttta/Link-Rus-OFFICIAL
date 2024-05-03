@@ -303,8 +303,22 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
 
             val sharedPref2 = getSharedPreferences("login", Context.MODE_PRIVATE)
             phone = sharedPref2.getString("phone", "noPhone").toString()
+            if (coname!=name){
+                if (coname == "Избранное"){
+                    avaChat.setBackgroundResource(R.drawable.saves_ava)
+                    chatName.text = "Избранное"
+                    coname = "Избранное"
+                }
+                else{
+                    chatName.text = coname
+                }
+            }
+            else{
+                avaChat.setBackgroundResource(R.drawable.saves_ava)
+                chatName.text = "Избранное"
+                coname = "Избранное"
 
-            chatName.text = coname
+            }
         }
     }
 
@@ -392,30 +406,36 @@ class ChatWindow : AppCompatActivity(), link.download.ru.MessageAdapter.ItemClic
                             "phone" to cophone
                         )
                         dbRef2.child(you).child(key).updateChildren(chatData as Map<String, Any>)
-                        val chatData2 = hashMapOf(
-                            "id" to you,
-                            "avaUrl" to "2",
-                            "chatStatus" to "-",
-                            "lastMessage" to text,
-                            "lastMessageTime" to time,
-                            "nameOfChat" to name,
-                            "pinnedMessage" to "-",
-                            "name" to name,
-                            "phone" to phone
-                        )
+                        if (cophone!=phone){
+                            val chatData2 = hashMapOf(
+                                "id" to you,
+                                "avaUrl" to "2",
+                                "chatStatus" to "-",
+                                "lastMessage" to text,
+                                "lastMessageTime" to time,
+                                "nameOfChat" to name,
+                                "pinnedMessage" to "-",
+                                "name" to name,
+                                "phone" to phone
+                            )
+                            dbRef2.child(key).child(you).updateChildren(chatData2 as Map<String, Any>)
+                        }
 
-                        val messageData = hashMapOf(
-                            "nottitle" to text,
-                            "notname" to "---",
-                            "phone" to cophone,
-                            "cophone" to key
-                        )
-                        dbRef3.child(cophone).updateChildren(messageData as Map<String, Any>)
+                        if (coname != "Избранное")
+                        {
+                            val messageData = hashMapOf(
+                                "nottitle" to text,
+                                "notname" to "---",
+                                "phone" to cophone,
+                                "cophone" to key
+                            )
+                            dbRef3.child(cophone).updateChildren(messageData as Map<String, Any>)
+                        }
+
 
                         text = ""
                         time = ""
 
-                        dbRef2.child(key).child(you).updateChildren(chatData2 as Map<String, Any>)
 
                         dbRef.child(chatId).child(counterOfMessages).updateChildren(mapa)
                             .addOnSuccessListener {
