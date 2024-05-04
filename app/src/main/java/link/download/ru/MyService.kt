@@ -17,7 +17,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
-@Suppress("DEPRECATION")
 class MyService : Service() {
     var id = ""
 
@@ -45,59 +44,59 @@ class MyService : Service() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun buildNotification(context: Context?){
 
-//        notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        createNotificationChannel(channelId, "Сообщения одиночных чатов", "nMC")
-//        val sharedPref = context.getSharedPreferences("login", Context.MODE_PRIVATE)
-//        phone = sharedPref.getString("phone", "-").toString()
-//        dbRef = FirebaseDatabase.getInstance().getReference("UserNotifications")
-//        Log.d("202012", "MessageReceiver запущен")
-//
-//        dbRef.addChildEventListener(object : ChildEventListener {
-//            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-//
-//            }
-//
-//            @SuppressLint("ForegroundServiceType")
-//            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-//                val data = snapshot.getValue(UserData::class.java)
-//                val name = data!!.notname
-//                val title = data.nottitle
-//                val phone2 = data.phone
-//                data.cophone
-//                Log.d("202012","$name")
-//
-//                if (phone == phone2){
-//                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-//                        builder = Notification.Builder(context, channelId)
-//                            .setContentTitle(name)
-//                            .setContentText(title)
-//                            .setSmallIcon(R.drawable.logo_round)
-//                            .setPriority(Notification.PRIORITY_HIGH)
-//                        startForeground(1, builder.build())
-//                    }
-//                    else{
-//                        builder = Notification.Builder(context, channelId)
-//                            .setContentTitle(name)
-//                            .setContentText(title)
-//                            .setSmallIcon(R.drawable.logo_round)
-//                            .setPriority(Notification.PRIORITY_HIGH)
-//                        startForeground(1, builder.build())
-//                    }
-//                }
-//            }
-//
-//            override fun onChildRemoved(snapshot: DataSnapshot) {
-//
-//            }
-//
-//            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-//
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//
-//            }
-//        })
+        notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        createNotificationChannel(channelId, "Сообщения одиночных чатов", "nMC")
+        val sharedPref = context.getSharedPreferences("login", Context.MODE_PRIVATE)
+        phone = sharedPref.getString("phone", "-").toString()
+        dbRef = FirebaseDatabase.getInstance().getReference("UserNotifications")
+        Log.d("202012", "MessageReceiver запущен")
+
+        dbRef.addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            @SuppressLint("ForegroundServiceType")
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                val data = snapshot.getValue(UserData::class.java)
+                val name = data!!.notname
+                val title = data.nottitle
+                val phone2 = data.phone
+                data.cophone
+                Log.d("202012","$name")
+
+                if (phone == phone2){
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+                        builder = Notification.Builder(context, channelId)
+                            .setContentTitle(name)
+                            .setContentText(title)
+                            .setSmallIcon(R.drawable.logo_round)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                        startForeground(1, builder.build())
+                    }
+                    else{
+                        builder = Notification.Builder(context, channelId)
+                            .setContentTitle(name)
+                            .setContentText(title)
+                            .setSmallIcon(R.drawable.logo_round)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                        startForeground(1, builder.build())
+                    }
+                }
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
 //        builder = Notification.Builder(context, channelId)
 //            .setSmallIcon(R.drawable.invisible_pic)
 //        startForeground(1, builder.build())
