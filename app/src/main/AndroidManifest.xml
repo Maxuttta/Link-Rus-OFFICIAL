@@ -25,7 +25,7 @@
         android:theme="@style/Theme.Link"
         tools:targetApi="31">
         <activity
-            android:name=".settings"
+            android:name=".Settings"
             android:exported="false" />
 
         <service
@@ -39,28 +39,25 @@
         </service>
 
         <activity
-            android:name=".profile"
+            android:name=".Profile"
             android:exported="false" />
         <activity
-            android:name=".successed_reg"
+            android:name=".Successed_reg"
             android:exported="false" />
         <activity
-            android:name=".reg_id"
+            android:name=".Regid"
             android:exported="false" />
         <activity
-            android:name=".reg_password"
+            android:name=".Regpassword"
             android:exported="false" />
         <activity
-            android:name=".reg_username"
+            android:name=".Reg_username"
             android:exported="false" />
         <activity
-            android:name=".chat_list"
+            android:name=".SuccessedLogin"
             android:exported="false" />
         <activity
-            android:name=".successedLogin"
-            android:exported="false" />
-        <activity
-            android:name=".pasword_activity"
+            android:name=".Pasword_activity"
             android:exported="false" />
         <activity
             android:name=".Phone"
@@ -70,11 +67,11 @@
             android:exported="false"
             android:label="@string/app_name" />
         <activity
-            android:name=".hello"
+            android:name=".Hello"
             android:exported="false"
             android:label="@string/app_name" />
         <activity
-            android:name=".list_drawer"
+            android:name=".Listdrawer"
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTop"

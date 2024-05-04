@@ -114,7 +114,9 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
 
             }
             settingsButton.setOnClickListener {
-
+                val intent = Intent(this@Listdrawer, Settings::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.from_left, R.anim.to_left)
             }
             savedButton.setOnClickListener {
                 val key = id
