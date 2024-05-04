@@ -2,6 +2,7 @@ package link.download.ru
 
 import android.annotation.SuppressLint
 import android.app.Notification
+import android.app.Notification.PRIORITY_HIGH
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
@@ -17,6 +18,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
+@Suppress("DEPRECATION")
 class MyService : Service() {
     var id = ""
 
@@ -71,7 +73,7 @@ class MyService : Service() {
                             .setContentTitle(name)
                             .setContentText(title)
                             .setSmallIcon(R.drawable.logo_round)
-                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setPriority(PRIORITY_HIGH)
                         startForeground(1, builder.build())
                     }
                     else{
@@ -79,7 +81,7 @@ class MyService : Service() {
                             .setContentTitle(name)
                             .setContentText(title)
                             .setSmallIcon(R.drawable.logo_round)
-                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setPriority(PRIORITY_HIGH)
                         startForeground(1, builder.build())
                     }
                 }
