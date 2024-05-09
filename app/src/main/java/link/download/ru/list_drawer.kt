@@ -111,7 +111,9 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
 
             }
             contactButton.setOnClickListener {
-
+                val intent = Intent(this@Listdrawer, contact::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.from_left, R.anim.to_left)
             }
             settingsButton.setOnClickListener {
                 val intent = Intent(this@Listdrawer, Settings::class.java)

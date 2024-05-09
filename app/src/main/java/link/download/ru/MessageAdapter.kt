@@ -25,23 +25,12 @@ class MessageAdapter(val context: Context, private val a: String, private val li
 
     private lateinit var mDiffResult: DiffUtil.DiffResult
 
-    class MessageToHolder(itemView: View) : RecyclerView.ViewHolder(itemView),View.OnClickListener {
+    class MessageToHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val text = itemView.findViewById<TextView>(R.id.messageTo)
         val timeText = itemView.findViewById<TextView>(R.id.timeTo)
         val card = itemView.findViewById<ConstraintLayout>(R.id.cardTo)
         val picTo = itemView.findViewById<ImageView>(R.id.picTo)
         val imageTo = itemView.findViewById<CardView>(R.id.imageTo)
-
-        init {
-            itemView.setOnClickListener(this)
-        }
-
-        override fun onClick(view: View) {
-
-        }
-
-
-
     }
 
     class MessageFromHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

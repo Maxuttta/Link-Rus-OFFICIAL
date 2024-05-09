@@ -24,7 +24,7 @@ class Settings : AppCompatActivity() {
             back.setOnClickListener {
                 val intent = Intent(this@Settings, Listdrawer::class.java)
                 startActivity(intent)
-                overridePendingTransition(R.anim.from_left, R.anim.to_left)
+                overridePendingTransition(R.anim.from_right, R.anim.to_right)
             }
         }
     }

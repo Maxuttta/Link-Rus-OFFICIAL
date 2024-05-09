@@ -99,9 +99,11 @@ class MyService : Service() {
 
             }
         })
-//        builder = Notification.Builder(context, channelId)
-//            .setSmallIcon(R.drawable.invisible_pic)
-//        startForeground(1, builder.build())
+        builder = Notification.Builder(context, channelId)
+            .setContentTitle("Это тестовое уведомление")
+            .setContentTitle("Не замечайте его")
+            .setSmallIcon(R.drawable.invisible_pic)
+        startForeground(1, builder.build())
     }
 
     private fun createNotificationChannel(

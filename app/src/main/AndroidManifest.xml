@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.RECEIVE_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <permission
         android:name="com.example.myapp.MY_CUSTOM_PERMISSION"
@@ -24,6 +25,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Link"
         tools:targetApi="31">
+        <activity
+            android:name=".contact"
+            android:exported="false" />
         <activity
             android:name=".Settings"
             android:exported="false" />
