@@ -60,7 +60,7 @@ class Phone : AppCompatActivity() {
 
                         dbRef2.get().addOnSuccessListener {snapshot ->
                             val data = snapshot.getValue(UserData::class.java)
-                            val id = data?.id
+                            val id = data?.Id
                             val pas = data?.password
                             val name = data?.name
                             val phone = data?.phone

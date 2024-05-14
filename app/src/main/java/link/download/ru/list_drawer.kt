@@ -1,6 +1,7 @@
 package link.download.ru
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -12,6 +13,7 @@ import android.view.WindowInsetsController
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -186,11 +188,15 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
                                 previousChildName: String?
                             ) {
                                 val data = snapshot.getValue(UserData::class.java)
+                                Log.d("MyApp", "User Data: ${data.toString()}")
+                                Log.d("MyApp", "User ID: ${data!!.Id}")
+                                Log.d("MyApp", "User Name: ${data.name}")
+                                Log.d("MyApp", "User Phone: ${data.phone}")
                                 if (data != null) {
-                                    val i = data.id
+                                    val i = data.Id
                                     if (searchForChat == i) {
                                         val name = data.name
-                                        val key = data.id
+                                        val key = data.Id
                                         val phone = data.phone
                                         val sharedPref = getSharedPreferences(
                                             "chatInfo",
@@ -232,32 +238,6 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
 
 
                         })
-//                        val docRef1 = db.collection("Users").document(searchForChat)
-//                        docRef1.get()
-//                            .addOnSuccessListener { document ->
-//                                if (document != null) {
-//                                    Log.d(ContentValues.TAG, "counter data: ${document.data}")
-//                                    val name = document.get("name").toString()
-//                                    val key = document.get("Id").toString()
-//                                    val phone = document.get("phone").toString()
-//
-//                                    val sharedPref = getSharedPreferences("chatInfo", Context.MODE_PRIVATE).edit()
-//                                    sharedPref.putString("chatName", name).apply()
-//                                    sharedPref.putString("chatKey", phone).apply()
-//
-//                                    sharedPref.putString("key", key).apply()
-//
-//                                    val intent = Intent(this@list_drawer, ChatWindow::class.java)
-//                                    startActivity(intent)
-//                                    overridePendingTransition(R.anim.from_left, R.anim.to_left)
-//                                } else {
-//                                    Log.d(ContentValues.TAG, "No such document")
-//                                }
-//
-//                            }
-//                            .addOnFailureListener {
-//                                Toast.makeText(this@list_drawer, "Ошибка", Toast.LENGTH_SHORT).show()
-//                            }
                     }
                 }
             }
