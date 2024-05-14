@@ -1,9 +1,9 @@
 package link.download.ru
 
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.database.ChildEventListener
@@ -68,6 +69,12 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
         c = sharedPre.getString("chatListIs", "false").toString()
 
 //
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_CONTACTS), 1)
+        } else {
+            // Permission already granted
+        }
+
 
         toLeft2 = AnimationUtils.loadAnimation(this, R.anim.to_left2)
         toLeft1 = AnimationUtils.loadAnimation(this, R.anim.to_left3)
@@ -110,12 +117,17 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
         binding.apply {
             userName.text = name
             addGroupeButton.setOnClickListener{
-
+                Toast.makeText(this@Listdrawer,"В следущем обновлении...",Toast.LENGTH_SHORT).show()
             }
             contactButton.setOnClickListener {
-                val intent = Intent(this@Listdrawer, contact::class.java)
-                startActivity(intent)
-                overridePendingTransition(R.anim.from_left, R.anim.to_left)
+                if (ContextCompat.checkSelfPermission(this@Listdrawer, android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this@Listdrawer, arrayOf(android.Manifest.permission.READ_CONTACTS), 1)
+                } else {
+                    val intent = Intent(this@Listdrawer, contact::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(R.anim.from_left, R.anim.to_left)
+                }
+
             }
             settingsButton.setOnClickListener {
                 val intent = Intent(this@Listdrawer, Settings::class.java)

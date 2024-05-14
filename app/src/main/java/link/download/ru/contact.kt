@@ -56,6 +56,7 @@ class contact : AppCompatActivity() {
 
     @SuppressLint("Range")
     private fun getContacts() {
+
         val contactsList = mutableListOf<ContactData>()
         val contentResolver = this.contentResolver
         val cursor = contentResolver.query(
