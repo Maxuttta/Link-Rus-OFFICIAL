@@ -67,7 +67,7 @@
             android:name=".Phone"
             android:exported="false" />
         <activity
-            android:name=".ChatWindow"
+            android:name=".chatWindow"
             android:exported="false"
             android:label="@string/app_name" />
         <activity

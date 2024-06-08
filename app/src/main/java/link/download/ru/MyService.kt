@@ -26,7 +26,7 @@ class MyService : Service() {
     lateinit var builder: Notification.Builder
     var phone = ""
     private lateinit var dbRef: DatabaseReference
-    private val channelId = "i.apps.notifications"
+    val channelId = "i.apps.notifications"
 
 
     override fun onBind(intent: Intent): IBinder? {
@@ -36,16 +36,14 @@ class MyService : Service() {
     @SuppressLint("ForegroundServiceType")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("202012","service is started")
+        Log.d("202012", "service запущен")
         buildNotification(this@MyService)
-
-        return START_STICKY
+        return Service.START_NOT_STICKY
     }
 
     @SuppressLint("ForegroundServiceType")
     @RequiresApi(Build.VERSION_CODES.O)
     fun buildNotification(context: Context?){
-
         notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         createNotificationChannel(channelId, "Сообщения одиночных чатов", "nMC")
         val sharedPref = context.getSharedPreferences("login", Context.MODE_PRIVATE)
@@ -68,21 +66,25 @@ class MyService : Service() {
                 Log.d("202012","$name")
 
                 if (phone == phone2){
+                    val id = (1..9999999).random()
+
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
                         builder = Notification.Builder(context, channelId)
                             .setContentTitle(name)
                             .setContentText(title)
                             .setSmallIcon(R.drawable.logo_round)
                             .setPriority(PRIORITY_HIGH)
-                        startForeground(1, builder.build())
+                        startForeground(id, builder.build())
                     }
                     else{
+                        val id = (1..9999999).random()
+
                         builder = Notification.Builder(context, channelId)
                             .setContentTitle(name)
                             .setContentText(title)
                             .setSmallIcon(R.drawable.logo_round)
                             .setPriority(PRIORITY_HIGH)
-                        startForeground(1, builder.build())
+                        startForeground(id, builder.build())
                     }
                 }
             }

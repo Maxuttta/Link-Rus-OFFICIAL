@@ -39,8 +39,7 @@ import java.util.Calendar
 import java.util.Locale
 
 
-@Suppress("DEPRECATION", "NAME_SHADOWING")
-class ChatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
+class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
     private lateinit var toLeft1: Animation
     private lateinit var toLeft2: Animation
     private lateinit var toRight1: Animation
@@ -142,7 +141,7 @@ class ChatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
         designAdapter()
 
 
-        binding.messageChatList.layoutManager = LinearLayoutManager(this@ChatWindow)
+        binding.messageChatList.layoutManager = LinearLayoutManager(this@chatWindow)
         binding.messageChatList.adapter = adapter
     }
 
@@ -230,7 +229,7 @@ class ChatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
     private fun back() {
         binding.apply {
             backButton.setOnClickListener {
-                val intent = Intent(this@ChatWindow, Listdrawer::class.java)
+                val intent = Intent(this@chatWindow, Listdrawer::class.java)
                 startActivity(intent)
                 overridePendingTransition(R.anim.from_right, R.anim.to_right)
                 finish()
@@ -259,7 +258,7 @@ class ChatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
             chatId = you + you
         }
         adapter = MessageAdapter(
-            this@ChatWindow,
+            this@chatWindow,
             you,
             this
         )
@@ -404,6 +403,9 @@ class ChatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                             )
                             dbRef3.child(cophone).updateChildren(messageData as Map<String, Any>)
                         }
+                        else{
+
+                        }
 
 
                         text = ""
@@ -517,7 +519,7 @@ class ChatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
     override fun onBackPressed() {
         super.onBackPressed()
         listIs = 1
-        val intent = Intent(this@ChatWindow, Listdrawer::class.java)
+        val intent = Intent(this@chatWindow, Listdrawer::class.java)
         startActivity(intent)
         overridePendingTransition(R.anim.from_right, R.anim.to_right)
         finish()

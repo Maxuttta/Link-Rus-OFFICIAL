@@ -105,7 +105,7 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
             designAdapter()
             menuAdapter()
             val intent = Intent(this@Listdrawer, MyService::class.java)
-            startForegroundService(intent)
+            startService(intent)
 
 
 
@@ -143,13 +143,24 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
                 sharedPref.putString("chatName", coname).apply()
                 sharedPref.putString("chatPhone", cophone).apply()
                 sharedPref.putString("chatKey", key).apply()
-                val intent = Intent(this@Listdrawer, ChatWindow::class.java)
+                val intent = Intent(this@Listdrawer, chatWindow::class.java)
                 startActivity(intent)
                 overridePendingTransition(R.anim.from_left, R.anim.to_left)
             }
         }
     }
-
+    private fun askNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                // FCM SDK (и ваше приложение) могут показывать уведомления.
+            } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
+                // Показать пользователю информационный интерфейс, объясняющий, какие функции будут включены при предоставлении разрешения.
+            } else {
+                // Запросить разрешение
+                ActivityCompat.requestPermissions(this@Listdrawer, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1)
+            }
+        }
+    }
     private fun designAdapter() {
         window.statusBarColor = ContextCompat.getColor(this, android.R.color.transparent)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -220,7 +231,7 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
                                         sharedPref.putString("key", key).apply()
 
                                         val intent =
-                                            Intent(this@Listdrawer, ChatWindow::class.java)
+                                            Intent(this@Listdrawer, chatWindow::class.java)
                                         startActivity(intent)
                                         overridePendingTransition(R.anim.from_left, R.anim.to_left)
                                     }
@@ -390,7 +401,7 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
         sharedPref.putString("chatName", coname).apply()
         sharedPref.putString("chatPhone", cophone).apply()
         sharedPref.putString("chatKey", key).apply()
-        val intent = Intent(this@Listdrawer, ChatWindow::class.java)
+        val intent = Intent(this@Listdrawer, chatWindow::class.java)
         startActivity(intent)
         overridePendingTransition(R.anim.from_left, R.anim.to_left)
     }
@@ -414,10 +425,10 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
 //        if (c == "true"){
 //        }
 //        if (c == "false"){
-////            val intent = Intent(this@list_drawer, MyService::class.java)
-////            startForegroundService(intent)
-////            val sharedPref = getSharedPreferences("system", Context.MODE_PRIVATE).edit()
-////            sharedPref.putString("isNotification", "true").apply()
+//            val intent = Intent(this@Listdrawer, MyService::class.java)
+//            startForegroundService(intent)
+//            val sharedPref = getSharedPreferences("system", Context.MODE_PRIVATE).edit()
+//            sharedPref.putString("isNotification", "true").apply()
 //        }
         super.onStop()
 

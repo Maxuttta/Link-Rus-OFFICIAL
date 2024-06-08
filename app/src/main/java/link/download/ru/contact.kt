@@ -56,7 +56,6 @@ class contact : AppCompatActivity() {
 
     @SuppressLint("Range")
     private fun getContacts() {
-
         val contactsList = mutableListOf<ContactData>()
         val contentResolver = this.contentResolver
         val cursor = contentResolver.query(
@@ -69,9 +68,8 @@ class contact : AppCompatActivity() {
 
         cursor?.use { c ->
             while (c.moveToNext()) {
-                var a = 0
                 val id = c.getString(c.getColumnIndex(ContactsContract.Contacts._ID))
-                var name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                val name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
                 var phone = ""
                 val hasPhone =
                     c.getInt(c.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0
@@ -93,19 +91,6 @@ class contact : AppCompatActivity() {
                 }
                 val contact = ContactData(id, name, phone)
                 adapter1.addItem(contact)
-//                val dbRef = FirebaseDatabase.getInstance().getReference("Users").child(phone)
-//                dbRef.get().addOnSuccessListener {snapshot ->
-//                    if (snapshot.exists()) {
-//                        val data = snapshot.getValue(UserData::class.java)
-//                        name = data?.name.toString()
-//                        phone = data?.phone.toString()
-//                        val contact = ContactData(id, name, phone)
-//                        adapter1.addItem(contact)
-//                    } else {
-//                        val contact = ContactData(id, name, phone)
-//                        adapter1.addItem(contact)
-//                    }
-//                }
             }
         }
     }
