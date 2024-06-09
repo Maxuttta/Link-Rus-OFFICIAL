@@ -17,6 +17,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
@@ -74,6 +75,9 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
     private var time = ""
     private var messageType = ""
     private var uri = ""
+    private var reText = ""
+    private var reId = ""
+    private var userId = ""
 
     private var editingText = ""
     private var edId = ""
@@ -243,6 +247,7 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
         key = sharedPref.getString("chatPhone", "ERROR").toString()
         val sharedPref2 = getSharedPreferences("login", Context.MODE_PRIVATE)
         you = sharedPref2.getString("phone", "ERROR").toString()
+        userId = sharedPref2.getString("id", "noId").toString()
 
         val n = key
         val nn = you
@@ -312,6 +317,7 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                 )
             }
             send.setOnClickListener {
+                toolConstraint.visibility = View.GONE
                 if (isEditing == 1) {
                     if (editText.text.toString() == editingText) {
                         editText2.visibility = View.GONE
@@ -364,7 +370,10 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                             "time" to time,
                             "userId" to you,
                             "messageType" to messageType,
-                            "pictureUrl" to uri
+                            "pictureUrl" to uri,
+                            "reText" to reText,
+                            "reId" to reId,
+                            "id" to userId
                         )
                         val chatData = hashMapOf(
                             "id" to key,
@@ -448,6 +457,9 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                             "messageType" to messageType,
                             "pictureUrl" to nameofimg
                         )
+                        reText = ""
+                        reId = ""
+
                         dbRef = FirebaseDatabase.getInstance().getReference("Chats")
                         dbRef.child(chatId).child(counterOfMessages)
                             .updateChildren(mapa)
@@ -456,6 +468,7 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                             }.addOnFailureListener {
                                 //не отправлено
                             }
+                        editText.requestFocus()
                     }
                 }
 
@@ -503,13 +516,18 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
     }
     private fun cancelEditingMessage() {
         binding.apply {
-            cancelEditMessage.setOnClickListener {
+            cancelTool.setOnClickListener {
                 if (isEditing == 1) {
                     editText2.visibility = View.GONE
                     editText.visibility = View.VISIBLE
                     toolConstraint.visibility = View.GONE
                     isEditing = 0
                     editText2.setText("")
+                }
+                else{
+                    toolConstraint.visibility = View.GONE
+                    reText = ""
+                    reId = ""
                 }
             }
         }
@@ -595,6 +613,18 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
         val clip = ClipData.newPlainText("text", textCopy)
         clipboard.setPrimaryClip(clip)
     }
+
+    override fun onRecieveClicked(position: Int, message: Message) {
+        binding.apply {
+            toolConstraint.visibility = View.VISIBLE
+            reText = message.title.toString()
+            reId = message.id.toString()
+            toolText1.text = reId
+            toolText2.text = reText
+            Toast.makeText(this@chatWindow,"$userId",Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun designAdapter() {
 
 

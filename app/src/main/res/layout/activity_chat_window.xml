@@ -177,7 +177,7 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <ImageView
-                    android:id="@+id/cancelEditMessage"
+                    android:id="@+id/cancelTool"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:clickable="true"
@@ -224,6 +224,7 @@
                     android:backgroundTint="@color/invisible"
                     android:gravity="center_vertical"
                     android:hint="Сообщение"
+                    android:inputType="textCapSentences"
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="3dp"
                     android:maxLines="5"

@@ -13,10 +13,11 @@
     <color name="color_offline">#808080</color>
 
     <color name="color_message_to">#A2A6DA</color>
-    <color name="color_message_from">#BFBFBF</color>
+    <color name="color_message_from">#ACACAC</color>
 
     <color name="light_gray">#A5A5A5</color>
     <color name="dark_gray">#6A6A6A</color>
+    <color name="half">#63FFFFFF</color>
 
     <color name="maincolor">#6a73d2</color>
     <color name="invisible">#00111111</color>

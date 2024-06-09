@@ -60,6 +60,62 @@
                 </FrameLayout>
             </androidx.cardview.widget.CardView>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/recardto"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:minHeight="30dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/messageTo"
+                app:layout_constraintLeft_toLeftOf="@+id/cardTo"
+                app:layout_constraintRight_toRightOf="@+id/cardTo"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="32dp"
+                    android:minWidth="180dp"
+                    app:cardCornerRadius="13dp"
+                    android:outlineAmbientShadowColor="@color/invisible"
+                    android:outlineSpotShadowColor="@color/invisible"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:backgroundTint="@color/half">
+
+                    <TextView
+                        android:id="@+id/reidto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fjikd"
+                        android:paddingRight="10dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:textSize="12dp"
+                        android:layout_marginLeft="8dp"/>
+
+                    <TextView
+                        android:id="@+id/retextto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Привет, как дела?"
+                        android:lines="1"
+                        android:paddingRight="10dp"
+                        android:textColor="@color/white"
+                        android:textColorLink="@color/links"
+                        android:textStyle="italic"
+                        android:textSize="12dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginLeft="8dp"/>
+
+                </androidx.cardview.widget.CardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <TextView
                 android:id="@+id/messageTo"
                 android:layout_width="wrap_content"

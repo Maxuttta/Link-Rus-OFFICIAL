@@ -11,7 +11,7 @@ class SuccessedLogin : AppCompatActivity() {
 
     private lateinit var binding: ActivitySuccessedLoginBinding
 
-    var name = "errorSL"
+    var name = "errorLogin"
     var id = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

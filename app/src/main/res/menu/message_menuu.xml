@@ -2,6 +2,9 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 <group>
+    <item android:title="Ответить"
+        android:id="@+id/recieve"
+        app:showAsAction="ifRoom"/>
     <item android:title="Копировать"
         android:icon="@drawable/copy_icon"
         android:id="@+id/copy"/>

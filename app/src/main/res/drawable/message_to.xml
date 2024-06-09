@@ -5,7 +5,7 @@
         android:color="@color/color_message_to" />
 
     <corners
-        android:bottomLeftRadius="22dp"
-        android:topLeftRadius="22dp"
-        android:topRightRadius="22dp"/>
+        android:bottomLeftRadius="15dp"
+        android:topLeftRadius="15dp"
+        android:topRightRadius="15dp"/>
 </shape>

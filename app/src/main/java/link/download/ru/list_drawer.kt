@@ -91,7 +91,6 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
         id = sharedPref.getString("id", "noId").toString()
         phone = sharedPref.getString("phone", "noPhone").toString()
         name = sharedPref.getString("name", "noName").toString()
-
         binding.flowButton1.setImageResource(R.drawable.ic_menu_white)
 
         if (isLog == "false") {

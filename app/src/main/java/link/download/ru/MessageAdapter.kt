@@ -1,6 +1,7 @@
 package link.download.ru
 
 import android.content.Context
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +32,9 @@ class MessageAdapter(val context: Context, private val a: String, private val li
         val card = itemView.findViewById<ConstraintLayout>(R.id.cardTo)
         val picTo = itemView.findViewById<ImageView>(R.id.picTo)
         val imageTo = itemView.findViewById<CardView>(R.id.imageTo)
+        val reCard = itemView.findViewById<ConstraintLayout>(R.id.recardto)
+        val reText = itemView.findViewById<TextView>(R.id.retextto)
+        val reId = itemView.findViewById<TextView>(R.id.reidto)
     }
 
     class MessageFromHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -39,6 +43,9 @@ class MessageAdapter(val context: Context, private val a: String, private val li
         val card = itemView.findViewById<ConstraintLayout>(R.id.cardFrom)
         val picFrom = itemView.findViewById<ImageView>(R.id.picFrom)
         val imageFrom = itemView.findViewById<CardView>(R.id.imageFrom)
+        val reCard = itemView.findViewById<ConstraintLayout>(R.id.recardfrom)
+        val reText = itemView.findViewById<TextView>(R.id.retextfrom)
+        val reId = itemView.findViewById<TextView>(R.id.reidfrom)
 
     }
 
@@ -108,7 +115,19 @@ class MessageAdapter(val context: Context, private val a: String, private val li
             }
             if (currentMessage.messageType == "emoji") {
                 holder.text.textSize = 90F
+                if (currentMessage.title == "😀"){
+
+                }
                 holder.card.setBackgroundResource(R.color.invisible)
+            }
+            if ((currentMessage.reText != null) && (currentMessage.reId != null) && (currentMessage.reText != "") && (currentMessage.reId != "")){
+                holder.reCard.visibility = View.VISIBLE
+                holder.reText.text = currentMessage.reText
+                holder.reText.ellipsize = TextUtils.TruncateAt.END
+                holder.reText.maxLines = 1
+                holder.reId.ellipsize = TextUtils.TruncateAt.END
+                holder.reId.maxLines = 1
+                holder.reId.text = currentMessage.reId
             }
         } else {
             val holder = holder as MessageFromHolder
@@ -131,6 +150,22 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                     holder.imageFrom.visibility = View.VISIBLE
                     holder.picFrom.maxWidth = 100
                 }
+            }
+            if (currentMessage.messageType == "emoji") {
+                holder.text.textSize = 90F
+                if (currentMessage.title == "😀"){
+
+                }
+                holder.card.setBackgroundResource(R.color.invisible)
+            }
+            if ((currentMessage.reText != null) && (currentMessage.reId != null) && (currentMessage.reText != "") && (currentMessage.reId != "")){
+                holder.reCard.visibility = View.VISIBLE
+                holder.reText.text = currentMessage.reText
+                holder.reText.ellipsize = TextUtils.TruncateAt.END
+                holder.reText.maxLines = 1
+                holder.reId.ellipsize = TextUtils.TruncateAt.END
+                holder.reId.maxLines = 1
+                holder.reId.text = currentMessage.reId
             }
             else {
                 holder.text.textSize = 90F
@@ -199,6 +234,10 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                         listener.onDeleteClicked(position, message)
                         true
                     }
+                    R.id.recieve -> {
+                        listener.onRecieveClicked(position,message)
+                        true
+                    }
                     else -> false
                 }
             }
@@ -215,6 +254,10 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                         listener.onCopyClicked(position, message)
                         true
                     }
+                    R.id.recieve -> {
+                        listener.onRecieveClicked(position,message)
+                        true
+                    }
                     R.id.delete -> {
                         listener.onDeleteClicked(position, message)
                         true
@@ -229,6 +272,7 @@ class MessageAdapter(val context: Context, private val a: String, private val li
         fun onDeleteClicked(position: Int, message: Message)
         fun onEditClicked(position: Int, message: Message)
         fun onCopyClicked(position: Int, message: Message)
+        fun onRecieveClicked(position: Int,message: Message)
     }
 
     interface Listener{
