@@ -64,6 +64,7 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
     private var phone = ""
 
     private var textCount = 0
+    private var reaction = ""
 
     private var counterOfMessages = ""
     private var messageId = 1
@@ -142,7 +143,6 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
         chatBar()
         cancelEditingMessage()
         keysListener()
-        designAdapter()
 
 
         binding.messageChatList.layoutManager = LinearLayoutManager(this@chatWindow)
@@ -373,8 +373,12 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                             "pictureUrl" to uri,
                             "reText" to reText,
                             "reId" to reId,
-                            "id" to userId
+                            "id" to userId,
+                            "reaction1" to reaction,
+                            "reaction2" to reaction
                         )
+                        reText = ""
+                        reId = ""
                         val chatData = hashMapOf(
                             "id" to key,
                             "avaUrl" to "?1?",
@@ -386,6 +390,8 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                             "name" to coname,
                             "phone" to cophone
                         )
+                        reText = ""
+                        reId = ""
                         dbRef2.child(you).child(key).updateChildren(chatData as Map<String, Any>)
                         if (cophone!=phone){
                             val chatData2 = hashMapOf(
@@ -401,7 +407,8 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                             )
                             dbRef2.child(key).child(you).updateChildren(chatData2 as Map<String, Any>)
                         }
-
+                        reText = ""
+                        reId = ""
                         if (coname != "Избранное")
                         {
                             val messageData = hashMapOf(
@@ -419,11 +426,13 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
 
                         text = ""
                         time = ""
-
+                        reText = ""
+                        reId = ""
 
                         dbRef.child(chatId).child(counterOfMessages).updateChildren(mapa)
                             .addOnSuccessListener {
-                                //отправлено
+                                reText = ""
+                                reId = ""
                             }.addOnFailureListener {
                                 //не отправлено
                             }
@@ -457,8 +466,6 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                             "messageType" to messageType,
                             "pictureUrl" to nameofimg
                         )
-                        reText = ""
-                        reId = ""
 
                         dbRef = FirebaseDatabase.getInstance().getReference("Chats")
                         dbRef.child(chatId).child(counterOfMessages)
@@ -621,12 +628,76 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
             reId = message.id.toString()
             toolText1.text = reId
             toolText2.text = reText
-            Toast.makeText(this@chatWindow,"$userId",Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun designAdapter() {
+    override fun e1(position: Int, message: Message) {
+        reaction = "👍"
+        edId = message.messageId.toString()
+        sendReaction()
+    }
 
+    override fun e2(position: Int, message: Message) {
+        reaction = "❤️"
+        edId = message.messageId.toString()
+        sendReaction()}
 
+    override fun e3(position: Int, message: Message) {
+        reaction = "🤣"
+        edId = message.messageId.toString()
+        sendReaction()}
+
+    override fun e4(position: Int, message: Message) {
+        reaction = "☹️"
+        edId = message.messageId.toString()
+        sendReaction()}
+
+    override fun e5(position: Int, message: Message) {
+        reaction = "😡"
+        edId = message.messageId.toString()
+        sendReaction()
+    }
+
+    fun sendReaction(){
+        val n = key
+        val nn = you
+        val result = n.compareTo(nn)
+        if (result > 0) {
+            val map = hashMapOf<String, Any>(
+                "reaction1" to reaction,
+            )
+            dbRef = FirebaseDatabase.getInstance().getReference("Chats")
+            dbRef.child(chatId).child(edId).updateChildren(map)
+                .addOnSuccessListener {
+                    //отправлено
+                }.addOnFailureListener {
+                    //не отправлено
+                }
+        }
+        if (result < 0) {
+            val map = hashMapOf<String, Any>(
+                "reaction2" to reaction,
+            )
+            dbRef = FirebaseDatabase.getInstance().getReference("Chats")
+            dbRef.child(chatId).child(edId).updateChildren(map)
+                .addOnSuccessListener {
+                    //отправлено
+                }.addOnFailureListener {
+                    //не отправлено
+                }
+        }
+        if (result == 0) {
+            val map = hashMapOf<String, Any>(
+                "reaction1" to reaction,
+            )
+            dbRef = FirebaseDatabase.getInstance().getReference("Chats")
+            dbRef.child(chatId).child(edId).updateChildren(map)
+                .addOnSuccessListener {
+                    //отправлено
+                }.addOnFailureListener {
+                    //не отправлено
+                }
+        }
+        reaction = ""
     }
 }

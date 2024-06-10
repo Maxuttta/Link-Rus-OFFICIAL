@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minWidth="150dp"
@@ -14,151 +13,361 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="80dp">
+        android:layout_marginLeft="50dp"
+        android:background="@color/invisible">
+
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cardTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:background="@drawable/message_to"
             android:foregroundGravity="right"
             android:minWidth="70dp"
             android:minHeight="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/imageTo"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cardTo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginRight="3dp"
-                android:layout_marginBottom="10dp"
-                android:outlineAmbientShadowColor="@color/invisible"
-                android:outlineSpotShadowColor="@color/invisible"
-                android:visibility="gone"
-                app:cardCornerRadius="20dp"
-                app:layout_constraintBottom_toTopOf="@+id/messageTo"
+                android:layout_gravity="right"
+                android:background="@drawable/message_to"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/emojiConstraint1"
+                    android:layout_width="210dp"
+                    android:layout_height="32dp"
+                    android:visibility="gone"
+                    android:background="@color/invisible"
+                    app:layout_constraintBottom_toTopOf="@+id/rviewto"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginLeft="2dp">
 
-                <FrameLayout
-                    android:id="@+id/frameLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/picTo"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter" />
-                </FrameLayout>
-            </androidx.cardview.widget.CardView>
+                        <LinearLayout
+                            android:id="@+id/emojiConstraint2"
+                            android:layout_marginTop="2dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="gone">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/recardto"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:minHeight="30dp"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="2dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/messageTo"
-                app:layout_constraintLeft_toLeftOf="@+id/cardTo"
-                app:layout_constraintRight_toRightOf="@+id/cardTo"
-                app:layout_constraintTop_toTopOf="parent">
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/e"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_marginRight="5dp"
+                                android:background="?attr/colorSecondary"
+                                app:cardCornerRadius="15dp">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginLeft="0.5dp"
+                                    android:layout_marginTop="-7dp"
+                                    android:gravity="center"
+                                    android:text="×"
+                                    android:textColor="@color/maincolor"
+                                    android:textSize="30dp"
+                                    android:textStyle="bold" />
+
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/e1"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_marginRight="5dp"
+                                android:background="?attr/colorSecondary"
+                                app:cardCornerRadius="15dp">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginBottom="2dp"
+                                    android:gravity="center"
+                                    android:text="👍"
+                                    android:textSize="18dp" />
+
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/e2"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_marginRight="5dp"
+                                android:background="?attr/colorSecondary"
+                                app:cardCornerRadius="15dp">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="❤️"
+                                    android:textSize="18dp" />
+
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/e3"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_marginRight="5dp"
+                                android:background="?attr/colorSecondary"
+                                app:cardCornerRadius="15dp">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="🤣"
+                                    android:textSize="18dp" />
+
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/e4"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_marginRight="5dp"
+                                android:background="?attr/colorSecondary"
+                                app:cardCornerRadius="15dp">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="☹️"
+                                    android:textSize="18dp" />
+
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/e5"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_marginRight="5dp"
+                                android:background="?attr/colorSecondary"
+                                app:cardCornerRadius="15dp">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="😡"
+                                    android:textSize="18dp" />
+
+                            </androidx.cardview.widget.CardView>
+
+                        </LinearLayout>
+
+                    </ScrollView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
+                    android:id="@+id/imageTo"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minHeight="32dp"
-                    android:minWidth="180dp"
-                    app:cardCornerRadius="13dp"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginRight="3dp"
+                    android:layout_marginBottom="10dp"
                     android:outlineAmbientShadowColor="@color/invisible"
                     android:outlineSpotShadowColor="@color/invisible"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:backgroundTint="@color/half">
+                    android:visibility="gone"
+                    app:cardCornerRadius="20dp"
+                    app:layout_constraintBottom_toTopOf="@+id/messageTo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                    <TextView
-                        android:id="@+id/reidto"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Fjikd"
-                        android:paddingRight="10dp"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
-                        android:textSize="12dp"
-                        android:layout_marginLeft="8dp"/>
 
-                    <TextView
-                        android:id="@+id/retextto"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Привет, как дела?"
-                        android:lines="1"
-                        android:paddingRight="10dp"
-                        android:textColor="@color/white"
-                        android:textColorLink="@color/links"
-                        android:textStyle="italic"
-                        android:textSize="12dp"
-                        android:layout_marginTop="14dp"
-                        android:layout_marginLeft="8dp"/>
+                    <FrameLayout
+                        android:id="@+id/frameLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
+                        <ImageView
+                            android:id="@+id/picTo"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitCenter" />
+                    </FrameLayout>
                 </androidx.cardview.widget.CardView>
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/recardto"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="2dp"
+                    android:minHeight="30dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@+id/messageTo"
+                    app:layout_constraintLeft_toLeftOf="@+id/cardTo"
+                    app:layout_constraintRight_toRightOf="@+id/cardTo">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/half"
+                        android:layout_marginTop="2dp"
+                        android:minWidth="180dp"
+                        android:minHeight="32dp"
+                        android:outlineAmbientShadowColor="@color/invisible"
+                        android:outlineSpotShadowColor="@color/invisible"
+                        app:cardCornerRadius="13dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/reidto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:paddingRight="10dp"
+                            android:text="Fjikd"
+                            android:textColor="@color/white"
+                            android:textSize="12dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/retextto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="14dp"
+                            android:lines="1"
+                            android:paddingRight="10dp"
+                            android:text="Привет, как дела?"
+                            android:textColor="@color/white"
+                            android:textColorLink="@color/links"
+                            android:textSize="12dp"
+                            android:textStyle="italic" />
+
+                    </androidx.cardview.widget.CardView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/rviewto"
+                    android:layout_width="100dp"
+                    android:layout_height="33dp"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="2dp"
+                    android:minHeight="30dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@+id/recardto"
+                    app:layout_constraintLeft_toLeftOf="@+id/cardTo">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/rc1to"
+                        android:layout_marginTop="2dp"
+                        android:layout_width="40dp"
+                        android:layout_height="30dp"
+                        android:backgroundTint="@color/half"
+                        android:outlineAmbientShadowColor="@color/invisible"
+                        android:outlineSpotShadowColor="@color/invisible"
+                        android:visibility="gone"
+                        app:cardCornerRadius="13dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/r1to"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="1dp"
+                            android:layout_marginBottom="1dp"
+                            android:gravity="center"
+                            android:text=""
+                            android:textSize="15dp" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/rc2to"
+                        android:layout_width="40dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginTop="2dp"
+                        android:backgroundTint="@color/half"
+                        android:outlineAmbientShadowColor="@color/invisible"
+                        android:outlineSpotShadowColor="@color/invisible"
+                        android:visibility="gone"
+                        app:cardCornerRadius="13dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/rc1to"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/r2to"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="1dp"
+                            android:layout_marginBottom="1dp"
+                            android:gravity="center"
+                            android:text=""
+                            android:textSize="15dp" />
+
+                    </androidx.cardview.widget.CardView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/messageTo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:autoLink="web"
+                    android:gravity="left"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingRight="50dp"
+                    android:paddingBottom="5dp"
+                    android:text="F"
+                    android:textColor="@color/white"
+                    android:textColorLink="@color/links"
+                    android:textSize="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/timeTo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="2dp"
+                    android:gravity="center"
+                    android:text="13:06"
+                    android:textColor="@color/white"
+                    android:textSize="9dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/not_readen"
+                    app:layout_constraintBottom_toBottomOf="@+id/timeTo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/timeTo" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <TextView
-                android:id="@+id/messageTo"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:autoLink="web"
-                android:gravity="left"
-                android:paddingLeft="10dp"
-                android:paddingTop="3dp"
-                android:paddingRight="50dp"
-                android:paddingBottom="5dp"
-                android:text="f"
-                android:textColor="@color/white"
-                android:textColorLink="@color/links"
-                android:textSize="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <TextView
-                android:id="@+id/timeTo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="2dp"
-                android:gravity="center"
-                android:text="13:06"
-                android:textColor="@color/white"
-                android:textSize="9dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/not_readen"
-                app:layout_constraintBottom_toBottomOf="@+id/timeTo"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/timeTo" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

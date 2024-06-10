@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 <group>
     <item android:title="Ответить"
+        android:icon="@drawable/baseline_answer_24"
         android:id="@+id/recieve"
         app:showAsAction="ifRoom"/>
     <item android:title="Копировать"
