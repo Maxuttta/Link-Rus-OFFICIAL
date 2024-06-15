@@ -20,12 +20,19 @@ import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 
 
+@Suppress("NAME_SHADOWING")
 class MessageAdapter(val context: Context, private val a: String, private val listener: ItemClickListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var messageList = mutableListOf<Message>()
     private val ITEM_FROM = 2
     private val ITEM_TO = 1
     private var reaction = ""
+    var isReCardVisible = false
+    var isEmojiPanelVisible = false
+    var isReactionVisible1 = false
+    var isReactionVisible2 = false
+    var isReactionCardVisible = false
+
 
     private lateinit var mDiffResult: DiffUtil.DiffResult
 
@@ -76,11 +83,11 @@ class MessageAdapter(val context: Context, private val a: String, private val li
         val ee4 = itemView.findViewById<CardView>(R.id.ee4)
         val ee5 = itemView.findViewById<CardView>(R.id.ee5)
 
-        val rview = itemView.findViewById<ConstraintLayout>(R.id.rviewfrom)
-        val rc1to = itemView.findViewById<CardView>(R.id.rc1from)
-        val rc2to = itemView.findViewById<CardView>(R.id.rc2from)
-        val r1to = itemView.findViewById<TextView>(R.id.r1from)
-        val r2to = itemView.findViewById<TextView>(R.id.r2from)
+        val rviewfrom = itemView.findViewById<ConstraintLayout>(R.id.rviewfrom)
+        val rc1from = itemView.findViewById<CardView>(R.id.rc1from)
+        val rc2from = itemView.findViewById<CardView>(R.id.rc2from)
+        val r1from = itemView.findViewById<TextView>(R.id.r1from)
+        val r2from = itemView.findViewById<TextView>(R.id.r2from)
     }
 
 
@@ -88,8 +95,9 @@ class MessageAdapter(val context: Context, private val a: String, private val li
         val currentMessage = messageList[position]
         return if (currentMessage.userId == a) {
             ITEM_TO
-        } else {
-            ITEM_FROM
+        }
+        else {
+            return ITEM_FROM
         }
     }
 
@@ -133,25 +141,20 @@ class MessageAdapter(val context: Context, private val a: String, private val li
 
         if (holder.javaClass == MessageToHolder::class.java) {
             val holder = holder as MessageToHolder
-            holder.itemView.setOnLongClickListener {
-                holder.emojiConstraint1.visibility = View.VISIBLE
-                holder.emojiConstraint2.visibility = View.VISIBLE
-                true
+            val storage = FirebaseStorage.getInstance()
+            val storageRef = storage.reference.child("Images/${currentMessage.pictureUrl}")
+            storageRef.downloadUrl.addOnSuccessListener { uri ->
+                Picasso.get().load(uri).into(holder.picTo)
+            }.addOnFailureListener { exception ->
+                Log.e("FirestoreImageLoadError", "Failed to load image: ${exception.message}")
             }
-                val storage = FirebaseStorage.getInstance()
-                val storageRef = storage.reference.child("Images/${currentMessage.pictureUrl}")
-                storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    Picasso.get().load(uri).into(holder.picTo)
-                }.addOnFailureListener { exception ->
-                    Log.e("FirestoreImageLoadError", "Failed to load image: ${exception.message}")
-                }
 //            }
             holder.text.text = currentMessage.title
             holder.timeText.text = currentMessage.time
             if (currentMessage.messageType == "text") {
                 holder.text.textSize = 16F
                 holder.card.setBackgroundResource(R.drawable.message_to)
-                if (currentMessage.pictureUrl != ""){
+                if (currentMessage.pictureUrl != "") {
                     holder.imageTo.visibility = View.VISIBLE
                     holder.picTo.maxWidth = 100
                 }
@@ -169,37 +172,83 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 holder.emojiConstraint2.visibility = View.GONE
             }
             holder.e1.setOnClickListener {
-                listener.e1(position,message)
+                listener.e1(position, message)
             }
             holder.e2.setOnClickListener {
-                listener.e2(position,message)
+                listener.e2(position, message)
             }
             holder.e3.setOnClickListener {
-                listener.e3(position,message)
+                listener.e3(position, message)
             }
             holder.e4.setOnClickListener {
-                listener.e4(position,message)
+                listener.e4(position, message)
             }
             holder.e5.setOnClickListener {
-                listener.e5(position,message)
+                listener.e5(position, message)
             }
-            if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null)){
+                ///////////////////////////////////////////////////////////////////////////////////
+            if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null)) {
+                isReactionVisible1 = true
+                isReactionCardVisible = true
+            }
+            if (isReactionVisible1) {
                 holder.rview.visibility = View.VISIBLE
                 holder.rc1to.visibility = View.VISIBLE
                 reaction = currentMessage.reaction1.toString()
                 holder.r1to.text = reaction
                 reaction = ""
+                isReactionVisible1 = false
+                isReactionCardVisible = false
+            }else {
+                if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null)){
+                    holder.rc1to.visibility = View.GONE
+                    isReactionVisible1 = false
+                    isReactionCardVisible = false
+                }
+                else{
+                    holder.rview.visibility = View.GONE
+                    holder.rc1to.visibility = View.GONE
+                    holder.rc2to.visibility = View.GONE
+                    isReactionVisible1 = false
+                    isReactionCardVisible = false
+                }
             }
-            if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null)){
+
+            if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null)) {
+                isReactionVisible2 = true
+                isReactionCardVisible = true
+            }
+            if (isReactionVisible2) {
                 holder.rview.visibility = View.VISIBLE
                 holder.rc2to.visibility = View.VISIBLE
                 reaction = currentMessage.reaction2.toString()
                 holder.r2to.text = reaction
                 reaction = ""
+                isReactionVisible2 = false
+                isReactionCardVisible = false
+            }
+            else {
+                if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null)){
+                    holder.rc2to.visibility = View.GONE
+                    isReactionVisible2 = false
+                    isReactionCardVisible = false
+                }
+                else{
+                    holder.rview.visibility = View.GONE
+                    holder.rc2to.visibility = View.GONE
+                    isReactionVisible2 = false
+                    isReactionCardVisible = false
+                }
             }
 
+            ///////////////////////////////////////////////////////////////////////////////////////
+            if ((currentMessage.reText != null) && (currentMessage.reId != null)
+                && (currentMessage.reText != "") && (currentMessage.reId != "")
+                && (currentMessage.reId!!.isNotEmpty())){
+                isReCardVisible = true
+            }
 
-            if ((currentMessage.reText != null) && (currentMessage.reId != null) && (currentMessage.reText != "") && (currentMessage.reId != "")){
+            if (isReCardVisible) {
                 holder.reCard.visibility = View.VISIBLE
                 holder.reText.text = currentMessage.reText
                 holder.reText.ellipsize = TextUtils.TruncateAt.END
@@ -207,6 +256,15 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 holder.reId.ellipsize = TextUtils.TruncateAt.END
                 holder.reId.maxLines = 1
                 holder.reId.text = currentMessage.reId
+                isReCardVisible = false
+            } else {
+                holder.reCard.visibility = View.GONE
+            }
+            ///////////////////////////////////////////////////////////////////////////////////////
+            holder.itemView.setOnLongClickListener {
+                holder.emojiConstraint1.visibility = View.VISIBLE
+                holder.emojiConstraint2.visibility = View.VISIBLE
+                true
             }
         }
 
@@ -265,20 +323,6 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 holder.emojiConstraint11.visibility = View.GONE
                 holder.emojiConstraint22.visibility = View.GONE
             }
-            if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null)){
-                holder.rview.visibility = View.VISIBLE
-                holder.rc1to.visibility = View.VISIBLE
-                reaction = currentMessage.reaction1.toString()
-                holder.r1to.text = reaction
-                reaction = ""
-            }
-            if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null)){
-                holder.rview.visibility = View.VISIBLE
-                holder.rc2to.visibility = View.VISIBLE
-                reaction = currentMessage.reaction2.toString()
-                holder.r2to.text = reaction
-                reaction = ""
-            }
             holder.text.text = currentMessage.title
             holder.timeText.text = currentMessage.time
             if (currentMessage.messageType == "text") {
@@ -289,15 +333,76 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                     holder.picFrom.maxWidth = 100
                 }
             }
-            if ((currentMessage.reText != null) && (currentMessage.reId != null) && (currentMessage.reText != "") && (currentMessage.reId != "")){
-                holder.reCard.setVisibility(View.VISIBLE)
-                holder?.reCard?.visibility = View.VISIBLE ?: View.GONE
+            ///////////////////////////////////////////////////////////////////////////////////////////////////
+            if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null)
+                && (currentMessage.reaction1!!.isNotEmpty())){
+                isReactionVisible1 = true
+                isReactionCardVisible = true
+//                holder.text.text = "1"
+            }
+            if (isReactionVisible1 && isReactionCardVisible) {
+                holder.rviewfrom.visibility = View.VISIBLE
+                holder.rc1from.visibility = View.VISIBLE
+                reaction = currentMessage.reaction1.toString()
+                holder.r1from.text = reaction
+                reaction = ""
+                isReactionVisible1 = false
+                isReactionCardVisible = false
+//                holder.text.text = "2"
+
+            }else {
+                if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null)){
+                    holder.rc1from.visibility = View.GONE
+                    isReactionVisible1 = false
+                    isReactionCardVisible = false
+                }
+                else{
+                    holder.rviewfrom.visibility = View.GONE
+                    holder.rc1from.visibility = View.GONE
+                    holder.rc2from.visibility = View.GONE
+                    isReactionVisible1 = false
+                    isReactionCardVisible = false
+                }
+            }
+
+            if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null)
+                && (currentMessage.reaction2!!.isNotEmpty())) {
+                isReactionVisible2 = true
+                isReactionCardVisible = true
+            }
+            if (isReactionVisible2 && isReactionCardVisible) {
+                holder.rviewfrom.visibility = View.VISIBLE
+                holder.rc2from.visibility = View.VISIBLE
+                reaction = currentMessage.reaction2.toString()
+                holder.r2from.text = reaction
+                reaction = ""
+                isReactionVisible1 = false
+                isReactionCardVisible = false
+            }else {
+                if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null)){
+                    holder.rc2from.visibility = View.GONE
+                    isReactionVisible2 = false
+                    isReactionCardVisible = false
+                }
+                else{
+                    holder.rviewfrom.visibility = View.GONE
+                    holder.rc2from.visibility = View.GONE
+                    isReactionVisible2 = false
+                    isReactionCardVisible = false
+                }
+            }
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            if (isReCardVisible) {
+                holder.reCard.visibility = View.VISIBLE
                 holder.reText.text = currentMessage.reText
                 holder.reText.ellipsize = TextUtils.TruncateAt.END
                 holder.reText.maxLines = 1
                 holder.reId.ellipsize = TextUtils.TruncateAt.END
                 holder.reId.maxLines = 1
                 holder.reId.text = currentMessage.reId
+                isReCardVisible = false
+            } else {
+                holder.reCard.visibility = View.GONE
             }
         }
     }

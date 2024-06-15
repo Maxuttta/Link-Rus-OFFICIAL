@@ -84,7 +84,8 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
         fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
         fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
         toBottomFadeOut = AnimationUtils.loadAnimation(this, R.anim.to_bottom_fade_out)
-
+        val intent = Intent(this@Listdrawer, MyService::class.java)
+        startService(intent)
         val sharedPref = getSharedPreferences("login", Context.MODE_PRIVATE)
 
         isLog = sharedPref.getString("isLog", "false").toString()
@@ -103,8 +104,7 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
             searchView()
             designAdapter()
             menuAdapter()
-            val intent = Intent(this@Listdrawer, MyService::class.java)
-            startService(intent)
+
 
 
 
@@ -143,6 +143,11 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
                 sharedPref.putString("chatPhone", cophone).apply()
                 sharedPref.putString("chatKey", key).apply()
                 val intent = Intent(this@Listdrawer, chatWindow::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.from_left, R.anim.to_left)
+            }
+            buttonAi.setOnClickListener {
+                val intent = Intent(this@Listdrawer, ChatWithGPT::class.java)
                 startActivity(intent)
                 overridePendingTransition(R.anim.from_left, R.anim.to_left)
             }

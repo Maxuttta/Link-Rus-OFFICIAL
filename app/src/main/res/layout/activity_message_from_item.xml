@@ -267,7 +267,6 @@
                     android:layout_marginTop="2dp"
                     android:layout_marginRight="2dp"
                     android:minHeight="30dp"
-                    android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@+id/recardfrom"
                     app:layout_constraintLeft_toLeftOf="@+id/cardFrom">
 
@@ -279,7 +278,6 @@
                         android:backgroundTint="@color/half"
                         android:outlineAmbientShadowColor="@color/invisible"
                         android:outlineSpotShadowColor="@color/invisible"
-                        android:visibility="gone"
                         app:cardCornerRadius="13dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -306,7 +304,6 @@
                         android:backgroundTint="@color/half"
                         android:outlineAmbientShadowColor="@color/invisible"
                         android:outlineSpotShadowColor="@color/invisible"
-                        android:visibility="gone"
                         app:cardCornerRadius="13dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/rc1from"

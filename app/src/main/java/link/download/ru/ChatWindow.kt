@@ -1,6 +1,7 @@
 package link.download.ru
 
 import android.annotation.SuppressLint
+import android.app.usage.UsageEvents.Event
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -10,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import com.vanniktech.emoji.google.GoogleEmojiProvider
 import com.vanniktech.emoji.EmojiManager
@@ -143,6 +145,10 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
         chatBar()
         cancelEditingMessage()
         keysListener()
+        leftswipe()
+
+        var TextGenerator = TextGenerator()
+
 
 
         binding.messageChatList.layoutManager = LinearLayoutManager(this@chatWindow)
@@ -225,6 +231,34 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    fun leftswipe(){
+        binding.apply{
+            var startX: Float = 0f
+            val swipeDistance = 300
+            editText.setOnTouchListener{ v, event ->
+                when(event.action){
+                    MotionEvent.ACTION_DOWN -> {
+                        startX = event.x
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        // Отслеживаем движение пальца
+                        if ((Math.abs(event.x - startX) > swipeDistance) && (event.x > startX)) {
+                            listIs = 1
+                            val intent = Intent(this@chatWindow, Listdrawer::class.java)
+                            startActivity(intent)
+                            overridePendingTransition(R.anim.from_right, R.anim.to_right)
+                            finish()
+                        }
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        startX = 0f
+                    }
+                }
+                true
+            }
+        }
+    }
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         getContent.launch(intent)
