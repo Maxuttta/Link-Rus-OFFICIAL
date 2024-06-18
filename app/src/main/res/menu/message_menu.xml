@@ -14,6 +14,10 @@
             android:icon="@drawable/baseline_edit_24"
             android:id="@+id/edit"
             app:showAsAction="ifRoom"/>
+        <item android:title="Сделать общим"
+            android:icon="@drawable/baseline_forum_244"
+            android:id="@+id/center"
+            app:showAsAction="ifRoom" />
         <item android:title="Удалить"
             android:icon="@drawable/delete"
             android:id="@+id/delete"

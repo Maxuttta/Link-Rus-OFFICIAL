@@ -426,6 +426,9 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
     override fun onStop() {
         val sharedPre = getSharedPreferences("system", Context.MODE_PRIVATE)
         c = sharedPre.getString("isNotification", "-").toString()
+
+        val sharedPref = getSharedPreferences("system", Context.MODE_PRIVATE)
+//        isChat = sharedPref.getString("chatListIs", "true").toString()
 //        if (c == "true"){
 //        }
 //        if (c == "false"){
@@ -453,5 +456,10 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
             )
             dbRef.child(phone).updateChildren(chatData as Map<String, Any>)
         }
+    }
+
+    override fun onDestroy() {
+
+        super.onDestroy()
     }
 }

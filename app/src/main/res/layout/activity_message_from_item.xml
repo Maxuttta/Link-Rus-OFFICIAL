@@ -283,7 +283,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
+                        <com.vanniktech.emoji.EmojiTextView
                             android:id="@+id/r1from"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -291,7 +291,7 @@
                             android:layout_marginBottom="1dp"
                             android:gravity="center"
                             android:text=""
-                            android:textSize="15dp" />
+                            android:textSize="19dp" />
 
                     </androidx.cardview.widget.CardView>
 
@@ -309,7 +309,7 @@
                         app:layout_constraintStart_toEndOf="@+id/rc1from"
                         app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
+                        <com.vanniktech.emoji.EmojiTextView
                             android:id="@+id/r2from"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -317,13 +317,13 @@
                             android:layout_marginBottom="1dp"
                             android:gravity="center"
                             android:text=""
-                            android:textSize="15dp" />
+                            android:textSize="19dp" />
 
                     </androidx.cardview.widget.CardView>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <TextView
+                <com.vanniktech.emoji.EmojiTextView
                     android:id="@+id/messageFrom"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"

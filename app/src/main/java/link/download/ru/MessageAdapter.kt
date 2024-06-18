@@ -1,5 +1,6 @@
 package link.download.ru
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.text.TextUtils
@@ -18,53 +19,60 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
+import com.vanniktech.emoji.EmojiTextView
 
 
 @Suppress("NAME_SHADOWING")
 class MessageAdapter(val context: Context, private val a: String, private val listener: ItemClickListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var messageList = mutableListOf<Message>()
+    private val ITEM_CENTER = 3
     private val ITEM_FROM = 2
     private val ITEM_TO = 1
     private var reaction = ""
     var isReCardVisible = false
     var isEmojiPanelVisible = false
+    var firstEmojiPanel = 0
     var isReactionVisible1 = false
     var isReactionVisible2 = false
     var isReactionCardVisible = false
 
 
     private lateinit var mDiffResult: DiffUtil.DiffResult
+        class MessageCenterHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+            val text = itemView.findViewById<EmojiTextView>(R.id.text_center)
+            val time = itemView.findViewById<EmojiTextView>(R.id.time_center)
+        }
 
-    class MessageToHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        val text = itemView.findViewById<TextView>(R.id.messageTo)
-        val timeText = itemView.findViewById<TextView>(R.id.timeTo)
-        val card = itemView.findViewById<ConstraintLayout>(R.id.cardTo)
-        val picTo = itemView.findViewById<ImageView>(R.id.picTo)
-        val imageTo = itemView.findViewById<CardView>(R.id.imageTo)
+        class MessageToHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+            val text = itemView.findViewById<EmojiTextView>(R.id.messageTo)
+            val timeText = itemView.findViewById<TextView>(R.id.timeTo)
+            val card = itemView.findViewById<ConstraintLayout>(R.id.cardTo)
+            val picTo = itemView.findViewById<ImageView>(R.id.picTo)
+            val imageTo = itemView.findViewById<CardView>(R.id.imageTo)
 
-        val reCard = itemView.findViewById<ConstraintLayout>(R.id.recardto)
-        val reText = itemView.findViewById<TextView>(R.id.retextto)
-        val reId = itemView.findViewById<TextView>(R.id.reidto)
+            val reCard = itemView.findViewById<ConstraintLayout>(R.id.recardto)
+            val reText = itemView.findViewById<TextView>(R.id.retextto)
+            val reId = itemView.findViewById<TextView>(R.id.reidto)
 
-        val emojiConstraint1 = itemView.findViewById<ConstraintLayout>(R.id.emojiConstraint1)
-        val emojiConstraint2 = itemView.findViewById<LinearLayout>(R.id.emojiConstraint2)
-        val e = itemView.findViewById<CardView>(R.id.e)
-        val e1 = itemView.findViewById<CardView>(R.id.e1)
-        val e2 = itemView.findViewById<CardView>(R.id.e2)
-        val e3 = itemView.findViewById<CardView>(R.id.e3)
-        val e4 = itemView.findViewById<CardView>(R.id.e4)
-        val e5 = itemView.findViewById<CardView>(R.id.e5)
+            val emojiConstraint1 = itemView.findViewById<ConstraintLayout>(R.id.emojiConstraint1)
+            val emojiConstraint2 = itemView.findViewById<LinearLayout>(R.id.emojiConstraint2)
+            val e = itemView.findViewById<CardView>(R.id.e)
+            val e1 = itemView.findViewById<CardView>(R.id.e1)
+            val e2 = itemView.findViewById<CardView>(R.id.e2)
+            val e3 = itemView.findViewById<CardView>(R.id.e3)
+            val e4 = itemView.findViewById<CardView>(R.id.e4)
+            val e5 = itemView.findViewById<CardView>(R.id.e5)
 
-        val rview = itemView.findViewById<ConstraintLayout>(R.id.rviewto)
-        val rc1to = itemView.findViewById<CardView>(R.id.rc1to)
-        val rc2to = itemView.findViewById<CardView>(R.id.rc2to)
-        val r1to = itemView.findViewById<TextView>(R.id.r1to)
-        val r2to = itemView.findViewById<TextView>(R.id.r2to)
+            val rview = itemView.findViewById<ConstraintLayout>(R.id.rviewto)
+            val rc1to = itemView.findViewById<CardView>(R.id.rc1to)
+            val rc2to = itemView.findViewById<CardView>(R.id.rc2to)
+            val r1to = itemView.findViewById<EmojiTextView>(R.id.r1to)
+            val r2to = itemView.findViewById<EmojiTextView>(R.id.r2to)
     }
 
     class MessageFromHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val text = itemView.findViewById<TextView>(R.id.messageFrom)
+        val text = itemView.findViewById<EmojiTextView>(R.id.messageFrom)
         val timeText = itemView.findViewById<TextView>(R.id.timeFrom)
         val card = itemView.findViewById<ConstraintLayout>(R.id.cardFrom)
         val picFrom = itemView.findViewById<ImageView>(R.id.picFrom)
@@ -86,8 +94,8 @@ class MessageAdapter(val context: Context, private val a: String, private val li
         val rviewfrom = itemView.findViewById<ConstraintLayout>(R.id.rviewfrom)
         val rc1from = itemView.findViewById<CardView>(R.id.rc1from)
         val rc2from = itemView.findViewById<CardView>(R.id.rc2from)
-        val r1from = itemView.findViewById<TextView>(R.id.r1from)
-        val r2from = itemView.findViewById<TextView>(R.id.r2from)
+        val r1from = itemView.findViewById<EmojiTextView>(R.id.r1from)
+        val r2from = itemView.findViewById<EmojiTextView>(R.id.r2from)
     }
 
 
@@ -95,6 +103,9 @@ class MessageAdapter(val context: Context, private val a: String, private val li
         val currentMessage = messageList[position]
         return if (currentMessage.userId == a) {
             ITEM_TO
+        }
+        else if(currentMessage.userId == "center"){
+            return ITEM_CENTER
         }
         else {
             return ITEM_FROM
@@ -104,6 +115,11 @@ class MessageAdapter(val context: Context, private val a: String, private val li
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
         return when (viewType) {
+            3 -> {
+                val view: View = LayoutInflater.from(context)
+                    .inflate(R.layout.message_center_item, parent, false)
+                MessageCenterHolder(view)
+            }
             2 -> {
                 val view: View = LayoutInflater.from(context)
                     .inflate(R.layout.activity_message_from_item, parent, false)
@@ -119,7 +135,6 @@ class MessageAdapter(val context: Context, private val a: String, private val li
             else -> {
                 val view: View = LayoutInflater.from(context)
                     .inflate(R.layout.activity_message_to_item, parent, false)
-
                 MessageToHolder(view)
             }
         }
@@ -133,10 +148,6 @@ class MessageAdapter(val context: Context, private val a: String, private val li
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 //        val ioScope = CoroutineScope(Dispatchers.IO)
 
-        holder.itemView.setOnClickListener {
-            showPopupMenu(it, position)
-        }
-
         val currentMessage = messageList[position]
 
         if (holder.javaClass == MessageToHolder::class.java) {
@@ -149,6 +160,11 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 Log.e("FirestoreImageLoadError", "Failed to load image: ${exception.message}")
             }
 //            }
+
+            @SuppressLint("ClickableViewAccessibility")
+            fun swipe(){
+
+            }
             holder.text.text = currentMessage.title
             holder.timeText.text = currentMessage.time
             if (currentMessage.messageType == "text") {
@@ -168,6 +184,7 @@ class MessageAdapter(val context: Context, private val a: String, private val li
 //            }
             val message = messageList[position]
             holder.e.setOnClickListener {
+                isEmojiPanelVisible = false
                 holder.emojiConstraint1.visibility = View.GONE
                 holder.emojiConstraint2.visibility = View.GONE
             }
@@ -187,7 +204,7 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 listener.e5(position, message)
             }
                 ///////////////////////////////////////////////////////////////////////////////////
-            if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null)) {
+            if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null) && (currentMessage.reaction1!!.isNotEmpty())) {
                 isReactionVisible1 = true
                 isReactionCardVisible = true
             }
@@ -200,7 +217,7 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 isReactionVisible1 = false
                 isReactionCardVisible = false
             }else {
-                if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null)){
+                if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null) && (currentMessage.reaction2!!.isNotEmpty())){
                     holder.rc1to.visibility = View.GONE
                     isReactionVisible1 = false
                     isReactionCardVisible = false
@@ -210,11 +227,12 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                     holder.rc1to.visibility = View.GONE
                     holder.rc2to.visibility = View.GONE
                     isReactionVisible1 = false
+                    isReactionVisible2= false
                     isReactionCardVisible = false
                 }
             }
 
-            if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null)) {
+            if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null) && (currentMessage.reaction2!!.isNotEmpty())) {
                 isReactionVisible2 = true
                 isReactionCardVisible = true
             }
@@ -228,23 +246,23 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 isReactionCardVisible = false
             }
             else {
-                if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null)){
+                if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null) && (currentMessage.reaction1!!.isNotEmpty())){
                     holder.rc2to.visibility = View.GONE
                     isReactionVisible2 = false
                     isReactionCardVisible = false
                 }
                 else{
                     holder.rview.visibility = View.GONE
+                    holder.rc1to.visibility = View.GONE
                     holder.rc2to.visibility = View.GONE
+                    isReactionVisible1 = false
                     isReactionVisible2 = false
                     isReactionCardVisible = false
                 }
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////
-            if ((currentMessage.reText != null) && (currentMessage.reId != null)
-                && (currentMessage.reText != "") && (currentMessage.reId != "")
-                && (currentMessage.reId!!.isNotEmpty())){
+            if ((currentMessage.reText != null) && (currentMessage.reText != "")){
                 isReCardVisible = true
             }
 
@@ -262,28 +280,53 @@ class MessageAdapter(val context: Context, private val a: String, private val li
             }
             ///////////////////////////////////////////////////////////////////////////////////////
             holder.itemView.setOnLongClickListener {
-                holder.emojiConstraint1.visibility = View.VISIBLE
-                holder.emojiConstraint2.visibility = View.VISIBLE
+                if (!isEmojiPanelVisible){
+                    holder.emojiConstraint1.visibility = View.VISIBLE
+                    holder.emojiConstraint2.visibility = View.VISIBLE
+                    isEmojiPanelVisible = true
+                }
                 true
+            }
+            holder.itemView.setOnClickListener {
+                if (isEmojiPanelVisible){
+                    isEmojiPanelVisible = false
+                    holder.emojiConstraint1.visibility = View.GONE
+                    holder.emojiConstraint2.visibility = View.GONE
+                }else{
+                    showPopupMenu(it, position)
+                }
             }
         }
 
-
+        else if (holder.javaClass == MessageCenterHolder::class.java){
+            val holder = holder as MessageCenterHolder
+            holder.text.text = currentMessage.reText
+            holder.time.text = currentMessage.time
+            val message = messageList[position]
+            holder.itemView.setOnClickListener{
+                listener.editCenter(position, message)
+            }
+        }
 
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
         else {
             val holder = holder as MessageFromHolder
             val currentMessage = messageList[position]
             holder.itemView.setOnLongClickListener {
-                holder.emojiConstraint11.visibility = View.VISIBLE
-                holder.emojiConstraint22.visibility = View.VISIBLE
+                if (!isEmojiPanelVisible){
+//                    firstEmojiPanel = position
+                    firstEmojiPanel = 1
+                    isEmojiPanelVisible = true
+                }
+                if (isEmojiPanelVisible){
+                    holder.emojiConstraint11.visibility = View.VISIBLE
+                    holder.emojiConstraint22.visibility = View.VISIBLE
+                }
                 true
+
             }
                 val storage = FirebaseStorage.getInstance()
                 val storageRef = storage.reference.child("Images/${currentMessage.pictureUrl}")
@@ -295,33 +338,24 @@ class MessageAdapter(val context: Context, private val a: String, private val li
 
             val message = messageList[position]
             holder.ee.setOnClickListener {
+                isEmojiPanelVisible = false
                 holder.emojiConstraint11.visibility = View.GONE
                 holder.emojiConstraint22.visibility = View.GONE
             }
             holder.ee1.setOnClickListener {
                 listener.e1(position,message)
-                holder.emojiConstraint11.visibility = View.GONE
-                holder.emojiConstraint22.visibility = View.GONE
             }
             holder.ee2.setOnClickListener {
                 listener.e2(position,message)
-                holder.emojiConstraint11.visibility = View.GONE
-                holder.emojiConstraint22.visibility = View.GONE
             }
             holder.ee3.setOnClickListener {
                 listener.e3(position,message)
-                holder.emojiConstraint11.visibility = View.GONE
-                holder.emojiConstraint22.visibility = View.GONE
             }
             holder.ee4.setOnClickListener {
                 listener.e4(position,message)
-                holder.emojiConstraint11.visibility = View.GONE
-                holder.emojiConstraint22.visibility = View.GONE
             }
             holder.ee5.setOnClickListener {
                 listener.e5(position,message)
-                holder.emojiConstraint11.visibility = View.GONE
-                holder.emojiConstraint22.visibility = View.GONE
             }
             holder.text.text = currentMessage.title
             holder.timeText.text = currentMessage.time
@@ -361,6 +395,7 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                     holder.rc1from.visibility = View.GONE
                     holder.rc2from.visibility = View.GONE
                     isReactionVisible1 = false
+                    isReactionVisible2 = false
                     isReactionCardVisible = false
                 }
             }
@@ -387,11 +422,16 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 else{
                     holder.rviewfrom.visibility = View.GONE
                     holder.rc2from.visibility = View.GONE
+                    isReactionVisible1 = false
                     isReactionVisible2 = false
                     isReactionCardVisible = false
                 }
             }
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            if ((currentMessage.reText != null) && (currentMessage.reText != "")){
+                isReCardVisible = true
+            }
+
             if (isReCardVisible) {
                 holder.reCard.visibility = View.VISIBLE
                 holder.reText.text = currentMessage.reText
@@ -403,6 +443,16 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 isReCardVisible = false
             } else {
                 holder.reCard.visibility = View.GONE
+            }
+            holder.itemView.setOnClickListener {
+                if (isEmojiPanelVisible){
+                    isEmojiPanelVisible = false
+                    holder.emojiConstraint11.visibility = View.GONE
+                    holder.emojiConstraint22.visibility = View.GONE
+                }
+                else{
+                    showPopupMenu(it, position)
+                }
             }
         }
     }
@@ -467,6 +517,10 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                         listener.onEditClicked(position, message)
                         true
                     }
+                    R.id.center -> {
+                        listener.onCenterClicked(position, message)
+                        true
+                    }
                     R.id.delete -> {
                         listener.onDeleteClicked(position, message)
                         true
@@ -512,13 +566,14 @@ class MessageAdapter(val context: Context, private val a: String, private val li
         fun onEditClicked(position: Int, message: Message)
         fun onCopyClicked(position: Int, message: Message)
         fun onRecieveClicked(position: Int,message: Message)
+        fun onCenterClicked(position: Int,message: Message)
         fun e1(position: Int,message: Message)
         fun e2(position: Int,message: Message)
         fun e3(position: Int,message: Message)
         fun e4(position: Int,message: Message)
         fun e5(position: Int,message: Message)
-
-
+        fun editCenter(position: Int,message: Message)
+        fun exit()
     }
     interface Listener{
         fun onClick(message: Message)

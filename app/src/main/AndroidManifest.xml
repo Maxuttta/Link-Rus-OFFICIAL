@@ -24,9 +24,13 @@
         android:roundIcon="@drawable/logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Link"
-        tools:targetApi="31">
-
-
+        tools:targetApi="34">
+        <activity
+            android:name=".workspace"
+            android:exported="false" />
+        <activity
+            android:name=".SplashActivity"
+            android:exported="false" />
         <activity
             android:name=".ChatWithGPT"
             android:exported="false" />
@@ -36,17 +40,6 @@
         <activity
             android:name=".Settings"
             android:exported="false" />
-
-        <service
-            android:name=".MyService"
-            android:enabled="true"
-            android:exported="false"
-            android:permission="com.example.myapp.MY_CUSTOM_PERMISSION">
-            <intent-filter>
-                <action android:name="android.content.Intent.ACTION_START_SERVICE" />
-            </intent-filter>
-        </service>
-
         <activity
             android:name=".Profile"
             android:exported="false" />

@@ -1,5 +1,7 @@
 package link.download.ru
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.usage.UsageEvents.Event
 import android.content.ClipData
@@ -7,12 +9,14 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import com.vanniktech.emoji.google.GoogleEmojiProvider
 import com.vanniktech.emoji.EmojiManager
 import android.view.animation.Animation
@@ -23,6 +27,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import link.download.ru.databinding.ActivityChatWindowBinding
@@ -33,6 +39,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
+import com.nineoldandroids.animation.ObjectAnimator
 import com.squareup.picasso.Picasso
 import com.vanniktech.emoji.EmojiPopup
 import java.io.ByteArrayOutputStream
@@ -54,6 +61,7 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
     private lateinit var fadeIn: Animation
 
     private var a = 1
+    private var b = 0
 
     private lateinit var binding: ActivityChatWindowBinding
     private lateinit var adapter: MessageAdapter
@@ -145,7 +153,8 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
         chatBar()
         cancelEditingMessage()
         keysListener()
-        leftswipe()
+//        swipe()
+//        leftswipe()
 
         var TextGenerator = TextGenerator()
 
@@ -665,6 +674,22 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
         }
     }
 
+    override fun onCenterClicked(position: Int, message: Message) {
+        edId = message.messageId.toString()
+
+//        Toast.makeText(this@chatWindow,"$edId",Toast.LENGTH_SHORT).show()
+        val map = hashMapOf<String, Any>(
+            "userId" to "center",
+        )
+        dbRef = FirebaseDatabase.getInstance().getReference("Chats")
+        dbRef.child(chatId).child(edId).updateChildren(map)
+            .addOnSuccessListener {
+                //отправлено
+            }.addOnFailureListener {
+                //не отправлено
+            }
+    }
+
     override fun e1(position: Int, message: Message) {
         reaction = "👍"
         edId = message.messageId.toString()
@@ -690,6 +715,26 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
         reaction = "😡"
         edId = message.messageId.toString()
         sendReaction()
+    }
+
+    override fun editCenter(position: Int, message: Message) {
+        text = message.title.toString()
+        edId = message.messageId.toString()
+        val sharedPref = getSharedPreferences("workspace", Context.MODE_PRIVATE).edit()
+        sharedPref.putString("id",edId).apply()
+        sharedPref.putString("chat",chatId).apply()
+        sharedPref.putString("text",text).apply()
+        val intent = Intent(this@chatWindow, workspace::class.java)
+        startActivity(intent)
+        overridePendingTransition(R.anim.from_left, R.anim.to_left)
+    }
+
+    override fun exit() {
+        listIs = 1
+        val intent = Intent(this@chatWindow, Listdrawer::class.java)
+        startActivity(intent)
+        overridePendingTransition(R.anim.from_right, R.anim.to_right)
+        finish()
     }
 
     fun sendReaction(){
@@ -733,5 +778,105 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                 }
         }
         reaction = ""
+    }
+
+    fun swipe(){
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
+            var swipedViewHolder: RecyclerView.ViewHolder? = null
+            var swipedPosition: Int = -1
+            var swipeBack: Float = 0.0f
+            var x: Float = 0.0f
+            var maxSwipeDistance: Float = 200f
+
+            override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+                var flags = makeMovementFlags(0, ItemTouchHelper.LEFT)
+                flags = flags or makeFlag(0, ItemTouchHelper.LEFT)
+                return flags
+            }
+
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
+
+            override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    x = dX
+                    if (dX < -maxSwipeDistance) {
+                        swipeBack = -dX / maxSwipeDistance
+                        val actualDX = -maxSwipeDistance
+                        super.onChildDraw(c, recyclerView, viewHolder, actualDX, dY, actionState, isCurrentlyActive)
+                    } else if (dX > maxSwipeDistance) {
+                        swipeBack = -dX / maxSwipeDistance
+                        val actualDX = maxSwipeDistance
+                        super.onChildDraw(c, recyclerView, viewHolder, actualDX, dY, actionState, isCurrentlyActive)
+                    } else {
+                        swipeBack = -dX / maxSwipeDistance
+                        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                    }
+                } else {
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                }
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                swipedPosition = viewHolder.adapterPosition
+                swipedViewHolder = viewHolder
+
+                if (direction == ItemTouchHelper.LEFT) {
+                    // Возврат элемента на исходное место
+                    val animator = ValueAnimator.ofFloat(swipeBack, 0f)
+                    animator.addUpdateListener { valueAnimator ->
+                        val value = valueAnimator.animatedValue as Float
+//                        viewHolder.itemView.translationX = -value * maxSwipeDistance
+                    }
+                    animator.interpolator = AccelerateDecelerateInterpolator()
+                    animator.duration = 300
+                    animator.start()
+                    animator.addListener(object : Animator.AnimatorListener {
+                        override fun onAnimationEnd(animation: Animator) {
+                            val animator = ValueAnimator.ofFloat(swipeBack, 0f)
+                            animator.duration = 100
+                            x = 0.0f
+                            swipeBack = 0.0f
+                            animator.interpolator = AccelerateDecelerateInterpolator()
+                            animator.start()
+                            animator.addListener(object : Animator.AnimatorListener {
+                                override fun onAnimationStart(animation: Animator) {
+                                    TODO("Not yet implemented")
+                                }
+
+                                override fun onAnimationEnd(animation: Animator) {
+                                    val animator = ValueAnimator.ofFloat(swipeBack, 0f)
+                                    animator.duration = 100
+                                    x = 0.0f
+                                    swipeBack = 0.0f
+                                    animator.interpolator = AccelerateDecelerateInterpolator()
+                                    animator.start()
+                                    adapter.notifyDataSetChanged()
+                                }
+
+                                override fun onAnimationCancel(animation: Animator) {
+                                    TODO("Not yet implemented")
+                                }
+
+                                override fun onAnimationRepeat(animation: Animator) {
+                                    TODO("Not yet implemented")
+                                }
+                            })
+                        }
+
+                        override fun onAnimationCancel(animation: Animator) {
+                        }
+
+                        override fun onAnimationRepeat(animation: Animator) {
+                        }
+
+                        override fun onAnimationStart(animation: Animator) {
+                        }
+                    })
+                }
+            }
+        })
+        itemTouchHelper.attachToRecyclerView(binding.messageChatList)
     }
 }

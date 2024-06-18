@@ -34,4 +34,8 @@
         <item name="fullscreenTextColor">@color/light_blue_A200</item>
     </style>
 
+    <style name="Theme.Link.Splash" parent="Theme.Link">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+
 </resources>
