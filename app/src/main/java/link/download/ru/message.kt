@@ -4,6 +4,7 @@ class Message{
     var time: String? = null
     var userId: String? = null
     var pictureUrl: String? = null
+    var litePictureUrl: String? = null
     var messageId: String? = null
     var messageType: String? = null
     var reText: String? = null
@@ -12,7 +13,7 @@ class Message{
     var reaction1: String? = null
     var reaction2:String? = null
     constructor(title: String, time: String, userId: String
-                , messageId: String, messageType: String, pictureUrl: String
+                , messageId: String, messageType: String, pictureUrl: String,litePictureUrl: String
                 ,reText: String, reId: String, id: String
                 ,reaction1: String, reaction2: String)
     {
@@ -22,6 +23,7 @@ class Message{
         this.messageId = messageId
         this.messageType = messageType
         this.pictureUrl = pictureUrl
+        this.litePictureUrl = litePictureUrl
         this.reId = reId
         this.reText = reText
         this.id = id

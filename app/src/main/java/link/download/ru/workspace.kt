@@ -3,6 +3,7 @@ package link.download.ru
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -35,48 +36,25 @@ class workspace : AppCompatActivity() {
             id = sharedPref.getString("id", "no id").toString()
             workspace.setText(text)
 
-            workspace.addTextChangedListener {
-                a = workspace.text.toString()
+            save.setOnClickListener{
+                val t = workspace.text.toString()
                 val map = hashMapOf<String, Any>(
-                    "title" to a
+                    "title" to t
                 )
                 dbRef = FirebaseDatabase.getInstance().getReference("Chats")
                 dbRef.child(chatId).child(id).updateChildren(map)
                     .addOnSuccessListener {
-                        //отправлено
+                        Toast.makeText(this@workspace,"Сохранено",Toast.LENGTH_SHORT).show()
                     }.addOnFailureListener {
                         //не отправлено
                     }
             }
-            val dbRef2 = FirebaseDatabase.getInstance().getReference("Chats").child(chatId)
-            dbRef2.addChildEventListener(object : ChildEventListener {
-                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-
-                }
-
-                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                    val data = snapshot.getValue(Message::class.java)
-                    val idd = data?.messageId.toString()
-                    if (idd == id){
-                        val textt = data?.title
-                        workspace.setText(textt)
-                        workspace.setSelection(workspace.text.length)
-                    }
-                }
-
-                override fun onChildRemoved(snapshot: DataSnapshot) {
-
-                }
-
-                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-
-                }
-
-            })
+            back.setOnClickListener{
+                val intent = Intent(this@workspace, chatWindow::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.from_right, R.anim.to_right)
+                finish()
+            }
         }
     }
 

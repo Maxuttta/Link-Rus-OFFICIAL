@@ -3,6 +3,7 @@ package link.download.ru
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.app.usage.UsageEvents.Event
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -13,19 +14,24 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.Window
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.vanniktech.emoji.google.GoogleEmojiProvider
 import com.vanniktech.emoji.EmojiManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -75,6 +81,7 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
 
     private var textCount = 0
     private var reaction = ""
+    private var isImage = false
 
     private var counterOfMessages = ""
     private var messageId = 1
@@ -85,7 +92,8 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
     private var textCopy = ""
     private var time = ""
     private var messageType = ""
-    private var uri = ""
+    private var uri1 = ""
+    private var uri2 = ""
     private var reText = ""
     private var reId = ""
     private var userId = ""
@@ -112,7 +120,7 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val selectedImageUri = result.data?.data
-                val image: ImageView = findViewById(R.id.subImage)
+                val image: ImageView = findViewById(R.id.toolPic)
                 Picasso.get().load(selectedImageUri).into(image)
                 imagechoosen = true
             }
@@ -153,15 +161,26 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
         chatBar()
         cancelEditingMessage()
         keysListener()
+        setupKeyboardListener()
 //        swipe()
 //        leftswipe()
 
-        var TextGenerator = TextGenerator()
-
-
-
         binding.messageChatList.layoutManager = LinearLayoutManager(this@chatWindow)
         binding.messageChatList.adapter = adapter
+    }
+    private fun setupKeyboardListener() {
+        binding.editText.setOnClickListener{
+            if (binding.messageChatList.computeVerticalScrollOffset() >= binding.messageChatList.computeVerticalScrollRange()
+                - binding.messageChatList.computeVerticalScrollExtent()) {
+                if (binding.messageChatList.adapter!!.itemCount - 1 != -1) {
+                    handler.postDelayed({
+                        binding.messageChatList.smoothScrollToPosition(
+                            binding.messageChatList.adapter!!.itemCount - 1
+                        )
+                    }, 200)
+                }
+            }
+        }
     }
 
     private fun keysListener() {
@@ -362,13 +381,14 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
             send.setOnClickListener {
                 toolConstraint.visibility = View.GONE
                 if (isEditing == 1) {
-                    if (editText.text.toString() == editingText) {
+                    if (editText2.text.toString() == editingText) {
                         editText2.visibility = View.GONE
                         editText.visibility = View.VISIBLE
                         toolConstraint.visibility = View.GONE
                         isEditing = 0
                         editText2.setText("")
-                    } else {
+                    }
+                    else {
                         newEdText = editText2.text.toString()
                         val map = hashMapOf<String, Any>(
                             "title" to newEdText,
@@ -394,18 +414,18 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                     dbRef2 = FirebaseDatabase.getInstance().getReference("UserChats")
                     dbRef3 = FirebaseDatabase.getInstance().getReference("UserNotifications")
 
-                    if ((editText.text.toString() != "")) {
+                    if ((editText.text.toString() != "") || imagechoosen) {
                         val timeFormat: DateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
                         time = timeFormat.format(Calendar.getInstance().time).toString()
                         text = editText.text.toString()
                         editText.setText("")
                         counterOfMessages = System.currentTimeMillis().toString()
-                        val containsEmojis = containsEmojis(text)
-                        messageType = if ((text.length == 2) && containsEmojis) {
-                            "emoji"
-                        } else {
-                            "text"
-                        }
+//                        val containsEmojis = containsEmojis(text)
+//                        messageType = if ((text.length == 2) && containsEmojis) {
+//                            "emoji"
+//                        } else {
+//                            "text"
+//                        }
 
                         val mapa = hashMapOf<String, Any>(
                             "messageId" to counterOfMessages,
@@ -413,15 +433,15 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                             "time" to time,
                             "userId" to you,
                             "messageType" to messageType,
-                            "pictureUrl" to uri,
+                            "pictureUrl" to uri1,
+                            "litePictureUrl" to uri2,
                             "reText" to reText,
                             "reId" to reId,
                             "id" to userId,
                             "reaction1" to reaction,
                             "reaction2" to reaction
                         )
-                        reText = ""
-                        reId = ""
+
                         val chatData = hashMapOf(
                             "id" to key,
                             "avaUrl" to "?1?",
@@ -433,8 +453,7 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                             "name" to coname,
                             "phone" to cophone
                         )
-                        reText = ""
-                        reId = ""
+
                         dbRef2.child(you).child(key).updateChildren(chatData as Map<String, Any>)
                         if (cophone!=phone){
                             val chatData2 = hashMapOf(
@@ -450,8 +469,7 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                             )
                             dbRef2.child(key).child(you).updateChildren(chatData2 as Map<String, Any>)
                         }
-                        reText = ""
-                        reId = ""
+
                         if (coname != "Избранное")
                         {
                             val messageData = hashMapOf(
@@ -466,62 +484,118 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
 
                         }
 
+                        if (imagechoosen == true){
+                            handler.postDelayed({
+                                val bitmap2 = (toolPic.drawable as BitmapDrawable).bitmap
+                                uri2 = generateRandomString()
+                                val storageRef2 = FirebaseStorage.getInstance().reference.child("Images/$uri2")
+                                val baos2 = ByteArrayOutputStream()
+                                val scaledBitmap2 = Bitmap.createScaledBitmap(bitmap2, 1, 1, true)
+                                scaledBitmap2.compress(Bitmap.CompressFormat.PNG, 30, baos2)
+                                val data2 = baos2.toByteArray()
+                                val uploadFile2 = storageRef2.putBytes(data2)
+                                uploadFile2.addOnSuccessListener {
 
-                        text = ""
-                        time = ""
-                        reText = ""
-                        reId = ""
+                                }
 
-                        dbRef.child(chatId).child(counterOfMessages).updateChildren(mapa)
-                            .addOnSuccessListener {
-                                reText = ""
-                                reId = ""
-                            }.addOnFailureListener {
-                                //не отправлено
-                            }
-                    } else {
-                        counterOfMessages = System.currentTimeMillis().toString()
+                                val bitmap1 = (toolPic.drawable as BitmapDrawable).bitmap
+                                uri1 = generateRandomString()
+                                val storageRef1 = FirebaseStorage.getInstance().reference.child("Images/$uri1")
+                                val baos1 = ByteArrayOutputStream()
+                                val scaledBitmap1 = Bitmap.createScaledBitmap(bitmap1, 800, 800, true)
+                                scaledBitmap1.compress(Bitmap.CompressFormat.PNG, 50, baos1)
+                                val data1 = baos1.toByteArray()
+                                val uploadFile1 = storageRef1.putBytes(data1)
+                                toolConstraint.visibility = View.VISIBLE
+                                toolPic.visibility = View.VISIBLE
+                                toolText1.text = "Изображение"
+                                toolText2.text = "Отправка..."
 
-                        val bitmap = (subImage.drawable as BitmapDrawable).bitmap
-                        val nameofimg = generateRandomString()
-                        val storageRef =
-                            FirebaseStorage.getInstance().reference.child("Images/$nameofimg")
-                        val baos = ByteArrayOutputStream()
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                        val data = baos.toByteArray()
-                        val uploadFile = storageRef.putBytes(data)
-                        uploadFile.addOnProgressListener { taskSnapshot ->
-                            val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount)
-                            Log.d("Upload progress", "Upload is $progress% done")
+                                uploadFile1.addOnSuccessListener {
+                                    toolConstraint.visibility = View.GONE
+                                    toolPic.visibility = View.GONE
+                                    val mapa = hashMapOf<String, Any>(
+                                        "messageId" to counterOfMessages,
+                                        "title" to text,
+                                        "time" to time,
+                                        "userId" to you,
+                                        "messageType" to messageType,
+                                        "pictureUrl" to uri1,
+                                        "litePictureUrl" to uri2,
+                                        "reText" to reText,
+                                        "reId" to reId,
+                                        "id" to userId,
+                                        "reaction1" to reaction,
+                                        "reaction2" to reaction
+                                    )
+                                    dbRef.child(chatId).child(counterOfMessages).updateChildren(mapa)
+                                        .addOnSuccessListener {
+                                            text = ""
+                                            time = ""
+                                            reText = ""
+                                            reId = ""
+                                            uri2 = ""
+                                            uri1 = ""
+                                            reText = ""
+                                            reId = ""
+                                        }.addOnFailureListener {
+                                            //не отправлено
+                                        }
+                                }
+                                uploadFile1.addOnProgressListener { taskSnapshot ->
+                                    val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount)
+                                    Log.d("Upload progress", "Upload is $progress% done")
+                                }
+
+                                imagechoosen = false
+                            },500)
+
                         }
-
-                        text = editText.text.toString()
-
-                        val timeFormat: DateFormat =
-                            SimpleDateFormat("HH:mm", Locale.getDefault())
-                        time = timeFormat.format(Calendar.getInstance().time).toString()
-                        messageType = "text"
-                        val mapa = hashMapOf<String, Any>(
-                            "messageId" to counterOfMessages,
-                            "title" to text,
-                            "time" to time,
-                            "userId" to you,
-                            "messageType" to messageType,
-                            "pictureUrl" to nameofimg
-                        )
-
-                        dbRef = FirebaseDatabase.getInstance().getReference("Chats")
-                        dbRef.child(chatId).child(counterOfMessages)
-                            .updateChildren(mapa)
-                            .addOnSuccessListener {
-                                uri = ""
-                            }.addOnFailureListener {
-                                //не отправлено
-                            }
-                        editText.requestFocus()
+                        else{
+                            dbRef.child(chatId).child(counterOfMessages).updateChildren(mapa)
+                                .addOnSuccessListener {
+                                    text = ""
+                                    time = ""
+                                    reText = ""
+                                    reId = ""
+                                    uri2 = ""
+                                    uri1 = ""
+                                    reText = ""
+                                    reId = ""
+                                }.addOnFailureListener {
+                                    //не отправлено
+                                }
+                        }
                     }
+//                    else {
+//                        counterOfMessages = System.currentTimeMillis().toString()
+//
+//                        text = editText.text.toString()
+//
+//                        val timeFormat: DateFormat =
+//                            SimpleDateFormat("HH:mm", Locale.getDefault())
+//                        time = timeFormat.format(Calendar.getInstance().time).toString()
+//                        messageType = "text"
+//                        val mapa = hashMapOf<String, Any>(
+//                            "messageId" to counterOfMessages,
+//                            "title" to text,
+//                            "time" to time,
+//                            "userId" to you,
+//                            "messageType" to messageType,
+//                            "pictureUrl" to nameofimg
+//                        )
+//
+//                        dbRef = FirebaseDatabase.getInstance().getReference("Chats")
+//                        dbRef.child(chatId).child(counterOfMessages)
+//                            .updateChildren(mapa)
+//                            .addOnSuccessListener {
+//                                uri = ""
+//                            }.addOnFailureListener {
+//                                //не отправлено
+//                            }
+//                        editText.requestFocus()
+//                    }
                 }
-
             }
         }
     }
@@ -640,11 +714,19 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
                 toolConstraint.visibility = View.VISIBLE
                 isEditing = 1
 
+
                 edId = message.messageId.toString()
                 text = message.title.toString()
                 editingText = text
 
+                toolText1.text = "Редактирование"
+
                 toolText2.text = text
+                toolText2.ellipsize = TextUtils.TruncateAt.END
+                toolText2.maxLines = 1
+
+                toolText1.ellipsize = TextUtils.TruncateAt.END
+                toolText1.maxLines = 1
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 editText2.requestFocus()
                 imm.showSoftInput(editText2, InputMethodManager.SHOW_IMPLICIT)
@@ -676,18 +758,34 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
 
     override fun onCenterClicked(position: Int, message: Message) {
         edId = message.messageId.toString()
-
-//        Toast.makeText(this@chatWindow,"$edId",Toast.LENGTH_SHORT).show()
-        val map = hashMapOf<String, Any>(
-            "userId" to "center",
-        )
-        dbRef = FirebaseDatabase.getInstance().getReference("Chats")
-        dbRef.child(chatId).child(edId).updateChildren(map)
-            .addOnSuccessListener {
-                //отправлено
-            }.addOnFailureListener {
-                //не отправлено
-            }
+        val dialog = Dialog(this@chatWindow)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.center_message_dialog)
+        val body = dialog.findViewById(R.id.body) as TextView
+        body.text = "Название общего сообщения"
+        val positive = dialog.findViewById(R.id.positive) as CardView
+        val namer = dialog.findViewById(R.id.namer) as EditText
+        positive.setOnClickListener {
+            val new = namer.text.toString()
+            val map = hashMapOf<String, Any>(
+                "userId" to "center",
+                "reText" to new.toString()
+            )
+            dbRef = FirebaseDatabase.getInstance().getReference("Chats")
+            dbRef.child(chatId).child(edId).updateChildren(map)
+                .addOnSuccessListener {
+                    //отправлено
+                }.addOnFailureListener {
+                    //не отправлено
+                }
+            dialog.dismiss()
+        }
+        val negative = dialog.findViewById(R.id.negative) as CardView
+        negative.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 
     override fun e1(position: Int, message: Message) {
@@ -715,6 +813,21 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
         reaction = "😡"
         edId = message.messageId.toString()
         sendReaction()
+    }
+
+    override fun reDrawItem(position: Int, message: Message) {
+        edId = message.messageId.toString()
+        val new = (0..999999999).random()
+        val map = hashMapOf<String, Any>(
+            "messageType" to new.toString()
+        )
+        dbRef = FirebaseDatabase.getInstance().getReference("Chats")
+        dbRef.child(chatId).child(edId).updateChildren(map)
+            .addOnSuccessListener {
+                //отправлено
+            }.addOnFailureListener {
+                //не отправлено
+            }
     }
 
     override fun editCenter(position: Int, message: Message) {

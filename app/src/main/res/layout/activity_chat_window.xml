@@ -145,8 +145,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="43dp"
                 android:background="?attr/colorSecondary"
-                android:visibility="gone"
                 android:layout_marginRight="50dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/constraintLayout4"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayout4">
 
@@ -160,8 +160,18 @@
                     android:textColor="?attr/colorOnSecondary"
                     android:textSize="13dp"
                     android:textStyle="italic"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/toolPic"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/toolPic"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/toolText2"
@@ -169,11 +179,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="4dp"
-                    android:text=""
+                    android:paddingRight="80dp"
+                    android:text="124123412341234123423412341234234123424134123413413234123424123"
+                    android:maxLines="1"
                     android:textColor="@color/white"
                     android:textSize="13dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toEndOf="@+id/toolPic" />
 
                 <ImageView
                     android:id="@+id/cancelTool"

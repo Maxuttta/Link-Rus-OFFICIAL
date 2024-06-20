@@ -2,6 +2,8 @@ package link.download.ru
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.text.TextUtils
 import android.util.Log
@@ -20,55 +22,64 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import com.vanniktech.emoji.EmojiTextView
+import java.io.File
 
 
 @Suppress("NAME_SHADOWING")
-class MessageAdapter(val context: Context, private val a: String, private val listener: ItemClickListener) :
+class MessageAdapter(
+    val context: Context,
+    private val a: String,
+    private val listener: ItemClickListener
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var messageList = mutableListOf<Message>()
     private val ITEM_CENTER = 3
     private val ITEM_FROM = 2
     private val ITEM_TO = 1
     private var reaction = ""
+    var isTextVisible = false
     var isReCardVisible = false
     var isEmojiPanelVisible = false
     var firstEmojiPanel = 0
     var isReactionVisible1 = false
     var isReactionVisible2 = false
     var isReactionCardVisible = false
-
+    var isImageCardVisible = false
 
     private lateinit var mDiffResult: DiffUtil.DiffResult
-        class MessageCenterHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-            val text = itemView.findViewById<EmojiTextView>(R.id.text_center)
-            val time = itemView.findViewById<EmojiTextView>(R.id.time_center)
-        }
 
-        class MessageToHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-            val text = itemView.findViewById<EmojiTextView>(R.id.messageTo)
-            val timeText = itemView.findViewById<TextView>(R.id.timeTo)
-            val card = itemView.findViewById<ConstraintLayout>(R.id.cardTo)
-            val picTo = itemView.findViewById<ImageView>(R.id.picTo)
-            val imageTo = itemView.findViewById<CardView>(R.id.imageTo)
+    class MessageCenterHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val text = itemView.findViewById<EmojiTextView>(R.id.text_center)
+        val time = itemView.findViewById<EmojiTextView>(R.id.time_center)
+    }
 
-            val reCard = itemView.findViewById<ConstraintLayout>(R.id.recardto)
-            val reText = itemView.findViewById<TextView>(R.id.retextto)
-            val reId = itemView.findViewById<TextView>(R.id.reidto)
+    class MessageToHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val text = itemView.findViewById<EmojiTextView>(R.id.messageTo)
+        val timeText = itemView.findViewById<TextView>(R.id.timeTo)
+        val card = itemView.findViewById<ConstraintLayout>(R.id.cardTo)
+        val picTo = itemView.findViewById<ImageView>(R.id.picTo)
+        val imageTo = itemView.findViewById<ConstraintLayout>(R.id.imageTo)
 
-            val emojiConstraint1 = itemView.findViewById<ConstraintLayout>(R.id.emojiConstraint1)
-            val emojiConstraint2 = itemView.findViewById<LinearLayout>(R.id.emojiConstraint2)
-            val e = itemView.findViewById<CardView>(R.id.e)
-            val e1 = itemView.findViewById<CardView>(R.id.e1)
-            val e2 = itemView.findViewById<CardView>(R.id.e2)
-            val e3 = itemView.findViewById<CardView>(R.id.e3)
-            val e4 = itemView.findViewById<CardView>(R.id.e4)
-            val e5 = itemView.findViewById<CardView>(R.id.e5)
+        val toolText = itemView.findViewById<TextView>(R.id.toolText)
 
-            val rview = itemView.findViewById<ConstraintLayout>(R.id.rviewto)
-            val rc1to = itemView.findViewById<CardView>(R.id.rc1to)
-            val rc2to = itemView.findViewById<CardView>(R.id.rc2to)
-            val r1to = itemView.findViewById<EmojiTextView>(R.id.r1to)
-            val r2to = itemView.findViewById<EmojiTextView>(R.id.r2to)
+        val reCard = itemView.findViewById<ConstraintLayout>(R.id.recardto)
+        val reText = itemView.findViewById<TextView>(R.id.retextto)
+        val reId = itemView.findViewById<TextView>(R.id.reidto)
+
+        val emojiConstraint1 = itemView.findViewById<ConstraintLayout>(R.id.emojiConstraint1)
+        val emojiConstraint2 = itemView.findViewById<LinearLayout>(R.id.emojiConstraint2)
+        val e = itemView.findViewById<CardView>(R.id.e)
+        val e1 = itemView.findViewById<CardView>(R.id.e1)
+        val e2 = itemView.findViewById<CardView>(R.id.e2)
+        val e3 = itemView.findViewById<CardView>(R.id.e3)
+        val e4 = itemView.findViewById<CardView>(R.id.e4)
+        val e5 = itemView.findViewById<CardView>(R.id.e5)
+
+        val rview = itemView.findViewById<ConstraintLayout>(R.id.rviewto)
+        val rc1to = itemView.findViewById<CardView>(R.id.rc1to)
+        val rc2to = itemView.findViewById<CardView>(R.id.rc2to)
+        val r1to = itemView.findViewById<EmojiTextView>(R.id.r1to)
+        val r2to = itemView.findViewById<EmojiTextView>(R.id.r2to)
     }
 
     class MessageFromHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -76,7 +87,7 @@ class MessageAdapter(val context: Context, private val a: String, private val li
         val timeText = itemView.findViewById<TextView>(R.id.timeFrom)
         val card = itemView.findViewById<ConstraintLayout>(R.id.cardFrom)
         val picFrom = itemView.findViewById<ImageView>(R.id.picFrom)
-        val imageFrom = itemView.findViewById<CardView>(R.id.imageFrom)
+        val imageFrom = itemView.findViewById<ConstraintLayout>(R.id.imageFrom)
 
         val reCard = itemView.findViewById<ConstraintLayout>(R.id.recardfrom)
         val reText = itemView.findViewById<TextView>(R.id.retextfrom)
@@ -103,11 +114,9 @@ class MessageAdapter(val context: Context, private val a: String, private val li
         val currentMessage = messageList[position]
         return if (currentMessage.userId == a) {
             ITEM_TO
-        }
-        else if(currentMessage.userId == "center"){
+        } else if (currentMessage.userId == "center") {
             return ITEM_CENTER
-        }
-        else {
+        } else {
             return ITEM_FROM
         }
     }
@@ -120,6 +129,7 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                     .inflate(R.layout.message_center_item, parent, false)
                 MessageCenterHolder(view)
             }
+
             2 -> {
                 val view: View = LayoutInflater.from(context)
                     .inflate(R.layout.activity_message_from_item, parent, false)
@@ -140,49 +150,127 @@ class MessageAdapter(val context: Context, private val a: String, private val li
         }
 
     }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-//        val ioScope = CoroutineScope(Dispatchers.IO)
+        isImageCardVisible = false
 
         val currentMessage = messageList[position]
 
         if (holder.javaClass == MessageToHolder::class.java) {
             val holder = holder as MessageToHolder
-            val storage = FirebaseStorage.getInstance()
-            val storageRef = storage.reference.child("Images/${currentMessage.pictureUrl}")
-            storageRef.downloadUrl.addOnSuccessListener { uri ->
-                Picasso.get().load(uri).into(holder.picTo)
-            }.addOnFailureListener { exception ->
-                Log.e("FirestoreImageLoadError", "Failed to load image: ${exception.message}")
-            }
-//            }
-
-            @SuppressLint("ClickableViewAccessibility")
-            fun swipe(){
-
-            }
-            holder.text.text = currentMessage.title
-            holder.timeText.text = currentMessage.time
-            if (currentMessage.messageType == "text") {
-                holder.text.textSize = 16F
-                holder.card.setBackgroundResource(R.drawable.message_to)
-                if (currentMessage.pictureUrl != "") {
-                    holder.imageTo.visibility = View.VISIBLE
-                    holder.picTo.maxWidth = 100
-                }
-            }
-//            if (currentMessage.messageType == "emoji") {
-//                holder.text.textSize = 90F
-//                if (currentMessage.title == "😀"){
-//
-//                }
-//                holder.card.setBackgroundResource(R.color.invisible)
-//            }
+            isImageCardVisible = false
             val message = messageList[position]
+            @SuppressLint("ClickableViewAccessibility")
+            holder.timeText.text = currentMessage.time
+
+            if ((currentMessage.title != "") && (currentMessage.title != null) &&(currentMessage.title!!.isNotEmpty())) {
+                isTextVisible = true
+            }
+            if (isTextVisible) {
+                holder.text.visibility = View.VISIBLE
+                holder.text.text = currentMessage.title
+                isTextVisible = false
+            }
+            else{
+                holder.text.visibility = View.GONE
+                isTextVisible = false
+            }
+
+            if ((currentMessage.pictureUrl != "") && (currentMessage.pictureUrl != null) &&(currentMessage.pictureUrl!!.isNotEmpty())) {
+                isImageCardVisible = true
+            }
+            if (isImageCardVisible) {
+                isImageCardVisible = false
+                val storage = FirebaseStorage.getInstance()
+                val storageRef = storage.reference.child("Images/${currentMessage.pictureUrl}")
+                val file = File(context.filesDir, currentMessage.pictureUrl)
+                if (file.exists()) {
+                    val bitmap = BitmapFactory.decodeFile(file.path)
+                    if (bitmap != null) {
+                        holder.imageTo.visibility = View.VISIBLE
+                        holder.picTo.setImageBitmap(bitmap)
+                        val params = holder.picTo.layoutParams
+                        params.width = bitmap.width
+                        params.height = bitmap.height
+                        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 400, 400, true)
+                        if (params.width == params.height) {
+                            params.width = 600
+                            params.height = 600
+                            holder.picTo.layoutParams = params
+                            holder.picTo.setImageBitmap(scaledBitmap)
+                        } else if (params.width < params.height) {
+                            params.width = 400
+                            params.height = 600
+                            holder.picTo.layoutParams = params
+                            holder.picTo.setImageBitmap(scaledBitmap)
+                        } else if (params.width > params.height) {
+                            params.width = 600
+                            params.height = 400
+                            holder.picTo.layoutParams = params
+                            holder.picTo.setImageBitmap(scaledBitmap)
+                        }
+                    }
+                } else {
+                    storageRef.getFile(file).addOnSuccessListener {
+                        val bitmap = BitmapFactory.decodeFile(file.path)
+                        val params = holder.picTo.layoutParams
+                        params.width = bitmap.width
+                        params.height = bitmap.height
+                        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 400, 400, true)
+                        if (params.width == params.height) {
+                            params.width = 600
+                            params.height = 600
+                            holder.picTo.layoutParams = params
+                            holder.picTo.setImageBitmap(scaledBitmap)
+                            isImageCardVisible = false
+                            Log.e(
+                                "FirestoreImageLoadError",
+                                "1"
+                            )
+                            listener.reDrawItem(position, message)
+                            holder.toolText.text = "1"
+                        } else if (params.width > params.height) {
+                            params.width = 400
+                            params.height = 600
+                            holder.picTo.layoutParams = params
+                            holder.picTo.setImageBitmap(scaledBitmap)
+                            isImageCardVisible = false
+                            Log.e(
+                                "FirestoreImageLoadError",
+                                "2"
+                            )
+                            listener.reDrawItem(position, message)
+                            holder.toolText.text = "1"
+                        } else if (params.width < params.height) {
+                            params.width = 600
+                            params.height = 400
+                            holder.picTo.layoutParams = params
+                            holder.picTo.setImageBitmap(scaledBitmap)
+                            isImageCardVisible = false
+                            Log.e(
+                                "FirestoreImageLoadError",
+                                "3"
+                            )
+                            listener.reDrawItem(position, message)
+                            holder.toolText.text = "1"
+                        }
+                    }.addOnFailureListener { exception ->
+                        Log.e(
+                            "FirestoreImageLoadError",
+                            "Failed to load image: ${exception.message}"
+                        )
+                    }
+                }
+            }else{
+                holder.imageTo.visibility = View.GONE
+                isImageCardVisible = false
+            }
+
             holder.e.setOnClickListener {
                 isEmojiPanelVisible = false
                 holder.emojiConstraint1.visibility = View.GONE
@@ -203,7 +291,7 @@ class MessageAdapter(val context: Context, private val a: String, private val li
             holder.e5.setOnClickListener {
                 listener.e5(position, message)
             }
-                ///////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////
             if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null) && (currentMessage.reaction1!!.isNotEmpty())) {
                 isReactionVisible1 = true
                 isReactionCardVisible = true
@@ -216,18 +304,17 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 reaction = ""
                 isReactionVisible1 = false
                 isReactionCardVisible = false
-            }else {
-                if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null) && (currentMessage.reaction2!!.isNotEmpty())){
+            } else {
+                if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null) && (currentMessage.reaction2!!.isNotEmpty())) {
                     holder.rc1to.visibility = View.GONE
                     isReactionVisible1 = false
                     isReactionCardVisible = false
-                }
-                else{
+                } else {
                     holder.rview.visibility = View.GONE
                     holder.rc1to.visibility = View.GONE
                     holder.rc2to.visibility = View.GONE
                     isReactionVisible1 = false
-                    isReactionVisible2= false
+                    isReactionVisible2 = false
                     isReactionCardVisible = false
                 }
             }
@@ -244,14 +331,12 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 reaction = ""
                 isReactionVisible2 = false
                 isReactionCardVisible = false
-            }
-            else {
-                if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null) && (currentMessage.reaction1!!.isNotEmpty())){
+            } else {
+                if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null) && (currentMessage.reaction1!!.isNotEmpty())) {
                     holder.rc2to.visibility = View.GONE
                     isReactionVisible2 = false
                     isReactionCardVisible = false
-                }
-                else{
+                } else {
                     holder.rview.visibility = View.GONE
                     holder.rc1to.visibility = View.GONE
                     holder.rc2to.visibility = View.GONE
@@ -262,7 +347,7 @@ class MessageAdapter(val context: Context, private val a: String, private val li
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////
-            if ((currentMessage.reText != null) && (currentMessage.reText != "")){
+            if ((currentMessage.reText != null) && (currentMessage.reText != "")) {
                 isReCardVisible = true
             }
 
@@ -280,7 +365,7 @@ class MessageAdapter(val context: Context, private val a: String, private val li
             }
             ///////////////////////////////////////////////////////////////////////////////////////
             holder.itemView.setOnLongClickListener {
-                if (!isEmojiPanelVisible){
+                if (!isEmojiPanelVisible) {
                     holder.emojiConstraint1.visibility = View.VISIBLE
                     holder.emojiConstraint2.visibility = View.VISIBLE
                     isEmojiPanelVisible = true
@@ -288,27 +373,29 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 true
             }
             holder.itemView.setOnClickListener {
-                if (isEmojiPanelVisible){
+                if (isEmojiPanelVisible) {
                     isEmojiPanelVisible = false
                     holder.emojiConstraint1.visibility = View.GONE
                     holder.emojiConstraint2.visibility = View.GONE
-                }else{
+                } else {
                     showPopupMenu(it, position)
                 }
             }
-        }
-
-        else if (holder.javaClass == MessageCenterHolder::class.java){
+        } else if (holder.javaClass == MessageCenterHolder::class.java) {
             val holder = holder as MessageCenterHolder
             holder.text.text = currentMessage.reText
             holder.time.text = currentMessage.time
             val message = messageList[position]
-            holder.itemView.setOnClickListener{
+            holder.itemView.setOnLongClickListener {
                 listener.editCenter(position, message)
+                true
+            }
+            holder.itemView.setOnClickListener {
+                showPopupMenu(it, position)
             }
         }
 
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -316,25 +403,18 @@ class MessageAdapter(val context: Context, private val a: String, private val li
             val holder = holder as MessageFromHolder
             val currentMessage = messageList[position]
             holder.itemView.setOnLongClickListener {
-                if (!isEmojiPanelVisible){
+                if (!isEmojiPanelVisible) {
 //                    firstEmojiPanel = position
                     firstEmojiPanel = 1
                     isEmojiPanelVisible = true
                 }
-                if (isEmojiPanelVisible){
+                if (isEmojiPanelVisible) {
                     holder.emojiConstraint11.visibility = View.VISIBLE
                     holder.emojiConstraint22.visibility = View.VISIBLE
                 }
                 true
 
             }
-                val storage = FirebaseStorage.getInstance()
-                val storageRef = storage.reference.child("Images/${currentMessage.pictureUrl}")
-                storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    Picasso.get().load(uri).into(holder.picFrom)
-                }.addOnFailureListener { exception ->
-                    Log.e("FirestoreImageLoadError", "Failed to load image: ${exception.message}")
-                }
 
             val message = messageList[position]
             holder.ee.setOnClickListener {
@@ -343,33 +423,127 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 holder.emojiConstraint22.visibility = View.GONE
             }
             holder.ee1.setOnClickListener {
-                listener.e1(position,message)
+                listener.e1(position, message)
             }
             holder.ee2.setOnClickListener {
-                listener.e2(position,message)
+                listener.e2(position, message)
             }
             holder.ee3.setOnClickListener {
-                listener.e3(position,message)
+                listener.e3(position, message)
             }
             holder.ee4.setOnClickListener {
-                listener.e4(position,message)
+                listener.e4(position, message)
             }
             holder.ee5.setOnClickListener {
-                listener.e5(position,message)
+                listener.e5(position, message)
             }
-            holder.text.text = currentMessage.title
+
             holder.timeText.text = currentMessage.time
-            if (currentMessage.messageType == "text") {
-                holder.text.textSize = 16F
-                holder.card.setBackgroundResource(R.drawable.message_from)
-                if (currentMessage.pictureUrl != ""){
-                    holder.imageFrom.visibility = View.VISIBLE
-                    holder.picFrom.maxWidth = 100
-                }
+
+            if ((currentMessage.title != "") && (currentMessage.title != null) &&(currentMessage.title!!.isNotEmpty())) {
+                isTextVisible = true
             }
+            if (isTextVisible) {
+                holder.text.visibility = View.VISIBLE
+                holder.text.text = currentMessage.title
+                isTextVisible = false
+            }
+            else{
+                holder.text.visibility = View.GONE
+                isTextVisible = false
+            }
+
+            if ((currentMessage.pictureUrl != "") && (currentMessage.pictureUrl != null) &&(currentMessage.pictureUrl!!.isNotEmpty())) {
+                isImageCardVisible = true
+            }
+            if (isImageCardVisible) {
+                isImageCardVisible = false
+                val storage = FirebaseStorage.getInstance()
+                val storageRef = storage.reference.child("Images/${currentMessage.pictureUrl}")
+                val file = File(context.filesDir, currentMessage.pictureUrl)
+                if (file.exists()) {
+                    val bitmap = BitmapFactory.decodeFile(file.path)
+                    if (bitmap != null) {
+                        holder.imageFrom.visibility = View.VISIBLE
+                        holder.picFrom.setImageBitmap(bitmap)
+                        val params = holder.picFrom.layoutParams
+                        params.width = bitmap.width
+                        params.height = bitmap.height
+                        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 400, 400, true)
+                        if (params.width == params.height) {
+                            params.width = 600
+                            params.height = 600
+                            holder.picFrom.layoutParams = params
+                            holder.picFrom.setImageBitmap(scaledBitmap)
+                        } else if (params.width < params.height) {
+                            params.width = 400
+                            params.height = 600
+                            holder.picFrom.layoutParams = params
+                            holder.picFrom.setImageBitmap(scaledBitmap)
+                        } else if (params.width > params.height) {
+                            params.width = 600
+                            params.height = 400
+                            holder.picFrom.layoutParams = params
+                            holder.picFrom.setImageBitmap(scaledBitmap)
+                        }
+                    }
+                } else {
+                    storageRef.getFile(file).addOnSuccessListener {
+                        val bitmap = BitmapFactory.decodeFile(file.path)
+                        val params = holder.picFrom.layoutParams
+                        params.width = bitmap.width
+                        params.height = bitmap.height
+                        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 400, 400, true)
+                        if (params.width == params.height) {
+                            params.width = 600
+                            params.height = 600
+                            holder.picFrom.layoutParams = params
+                            holder.picFrom.setImageBitmap(scaledBitmap)
+                            isImageCardVisible = false
+                            Log.e(
+                                "FirestoreImageLoadError",
+                                "1"
+                            )
+                            listener.reDrawItem(position, message)
+                        } else if (params.width > params.height) {
+                            params.width = 400
+                            params.height = 600
+                            holder.picFrom.layoutParams = params
+                            holder.picFrom.setImageBitmap(scaledBitmap)
+                            isImageCardVisible = false
+                            Log.e(
+                                "FirestoreImageLoadError",
+                                "2"
+                            )
+                            listener.reDrawItem(position, message)
+                        } else if (params.width < params.height) {
+                            params.width = 600
+                            params.height = 400
+                            holder.picFrom.layoutParams = params
+                            holder.picFrom.setImageBitmap(scaledBitmap)
+                            isImageCardVisible = false
+                            Log.e(
+                                "FirestoreImageLoadError",
+                                "3"
+                            )
+                            listener.reDrawItem(position, message)
+                        }
+                    }.addOnFailureListener { exception ->
+                        Log.e(
+                            "FirestoreImageLoadError",
+                            "Failed to load image: ${exception.message}"
+                        )
+                    }
+                }
+            }else{
+                holder.imageFrom.visibility = View.GONE
+                isImageCardVisible = false
+            }
+
             ///////////////////////////////////////////////////////////////////////////////////////////////////
             if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null)
-                && (currentMessage.reaction1!!.isNotEmpty())){
+                && (currentMessage.reaction1!!.isNotEmpty())
+            ) {
                 isReactionVisible1 = true
                 isReactionCardVisible = true
 //                holder.text.text = "1"
@@ -384,13 +558,12 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 isReactionCardVisible = false
 //                holder.text.text = "2"
 
-            }else {
-                if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null)){
+            } else {
+                if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null)) {
                     holder.rc1from.visibility = View.GONE
                     isReactionVisible1 = false
                     isReactionCardVisible = false
-                }
-                else{
+                } else {
                     holder.rviewfrom.visibility = View.GONE
                     holder.rc1from.visibility = View.GONE
                     holder.rc2from.visibility = View.GONE
@@ -401,7 +574,8 @@ class MessageAdapter(val context: Context, private val a: String, private val li
             }
 
             if ((currentMessage.reaction2 != "") && (currentMessage.reaction2 != null)
-                && (currentMessage.reaction2!!.isNotEmpty())) {
+                && (currentMessage.reaction2!!.isNotEmpty())
+            ) {
                 isReactionVisible2 = true
                 isReactionCardVisible = true
             }
@@ -413,13 +587,12 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 reaction = ""
                 isReactionVisible1 = false
                 isReactionCardVisible = false
-            }else {
-                if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null)){
+            } else {
+                if ((currentMessage.reaction1 != "") && (currentMessage.reaction1 != null)) {
                     holder.rc2from.visibility = View.GONE
                     isReactionVisible2 = false
                     isReactionCardVisible = false
-                }
-                else{
+                } else {
                     holder.rviewfrom.visibility = View.GONE
                     holder.rc2from.visibility = View.GONE
                     isReactionVisible1 = false
@@ -427,8 +600,8 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                     isReactionCardVisible = false
                 }
             }
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            if ((currentMessage.reText != null) && (currentMessage.reText != "")){
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            if ((currentMessage.reText != null) && (currentMessage.reText != "")) {
                 isReCardVisible = true
             }
 
@@ -445,17 +618,17 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                 holder.reCard.visibility = View.GONE
             }
             holder.itemView.setOnClickListener {
-                if (isEmojiPanelVisible){
+                if (isEmojiPanelVisible) {
                     isEmojiPanelVisible = false
                     holder.emojiConstraint11.visibility = View.GONE
                     holder.emojiConstraint22.visibility = View.GONE
-                }
-                else{
+                } else {
                     showPopupMenu(it, position)
                 }
             }
         }
     }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -491,7 +664,7 @@ class MessageAdapter(val context: Context, private val a: String, private val li
         val index = messageList.indexOfFirst { it.messageId == item.messageId }
         messageList.removeAt(index)
         notifyItemRemoved(index)
-        notifyItemRangeChanged(index,messageList.size)
+        notifyItemRangeChanged(index, messageList.size)
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -513,28 +686,54 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                         listener.onCopyClicked(position, message)
                         true
                     }
+
                     R.id.edit -> {
                         listener.onEditClicked(position, message)
                         true
                     }
+
                     R.id.center -> {
                         listener.onCenterClicked(position, message)
                         true
                     }
+
                     R.id.delete -> {
                         listener.onDeleteClicked(position, message)
                         true
                     }
+
                     R.id.recieve -> {
-                        listener.onRecieveClicked(position,message)
+                        listener.onRecieveClicked(position, message)
                         true
                     }
+
                     else -> false
                 }
             }
             popupMenu.show()
-        }
-        if (message.userId != a){
+        } else if (message.userId == "center") {
+            val popupMenu = PopupMenu(context, view)
+            popupMenu.setForceShowIcon(true)
+            popupMenu.menuInflater.inflate(R.menu.center_menu, popupMenu.menu)
+            popupMenu.menu.findItem(R.id.recieve).setIcon(R.drawable.baseline_answer_24)
+            popupMenu.menu.findItem(R.id.delete).setIcon(R.drawable.delete)
+            popupMenu.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.delete -> {
+                        listener.onDeleteClicked(position, message)
+                        true
+                    }
+
+                    R.id.recieve -> {
+                        listener.onRecieveClicked(position, message)
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+            popupMenu.show()
+        } else {
             val popupMenu = PopupMenu(context, view)
             popupMenu.setForceShowIcon(true)
             popupMenu.menuInflater.inflate(R.menu.message_menuu, popupMenu.menu)
@@ -547,35 +746,41 @@ class MessageAdapter(val context: Context, private val a: String, private val li
                         listener.onCopyClicked(position, message)
                         true
                     }
+
                     R.id.recieve -> {
-                        listener.onRecieveClicked(position,message)
+                        listener.onRecieveClicked(position, message)
                         true
                     }
+
                     R.id.delete -> {
                         listener.onDeleteClicked(position, message)
                         true
                     }
+
                     else -> false
                 }
             }
             popupMenu.show()
         }
     }
+
     interface ItemClickListener {
         fun onDeleteClicked(position: Int, message: Message)
         fun onEditClicked(position: Int, message: Message)
         fun onCopyClicked(position: Int, message: Message)
-        fun onRecieveClicked(position: Int,message: Message)
-        fun onCenterClicked(position: Int,message: Message)
-        fun e1(position: Int,message: Message)
-        fun e2(position: Int,message: Message)
-        fun e3(position: Int,message: Message)
-        fun e4(position: Int,message: Message)
-        fun e5(position: Int,message: Message)
-        fun editCenter(position: Int,message: Message)
+        fun onRecieveClicked(position: Int, message: Message)
+        fun onCenterClicked(position: Int, message: Message)
+        fun e1(position: Int, message: Message)
+        fun e2(position: Int, message: Message)
+        fun e3(position: Int, message: Message)
+        fun e4(position: Int, message: Message)
+        fun e5(position: Int, message: Message)
+        fun reDrawItem(position: Int, message: Message)
+        fun editCenter(position: Int, message: Message)
         fun exit()
     }
-    interface Listener{
+
+    interface Listener {
         fun onClick(message: Message)
     }
 }

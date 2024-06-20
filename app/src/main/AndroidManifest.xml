@@ -26,6 +26,9 @@
         android:theme="@style/Theme.Link"
         tools:targetApi="34">
         <activity
+            android:name=".activity_image_viewer"
+            android:exported="false" />
+        <activity
             android:name=".workspace"
             android:exported="false" />
         <activity
