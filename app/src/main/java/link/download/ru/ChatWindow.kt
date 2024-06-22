@@ -297,6 +297,7 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
             backButton.setOnClickListener {
                 val intent = Intent(this@chatWindow, Listdrawer::class.java)
                 startActivity(intent)
+                listIs = 1
                 overridePendingTransition(R.anim.from_right, R.anim.to_right)
                 finish()
             }
@@ -671,8 +672,8 @@ class chatWindow : AppCompatActivity(), MessageAdapter.ItemClickListener {
     @SuppressLint("SuspiciousIndentation")
     override fun onStart() {
         super.onStart()
-        val sharedPref = getSharedPreferences("system", Context.MODE_PRIVATE)
-        isChat = sharedPref.getString("chatListIs", "true").toString()
+        val sharedPref = getSharedPreferences("system", Context.MODE_PRIVATE).edit()
+        sharedPref.putString("chatIs", "true").apply()
         val dbRef = FirebaseDatabase.getInstance().getReference("Users")
         val chatData = hashMapOf(
             "status" to "online",

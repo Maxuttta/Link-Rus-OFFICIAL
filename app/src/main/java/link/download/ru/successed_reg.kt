@@ -48,7 +48,9 @@ class Successed_reg : AppCompatActivity() {
                     "phone" to "7$phone",
                     "icon" to "url",
                     "status" to "???",
-                    "time" to "???"
+                    "time" to "???",
+                    "icon1" to "",
+                    "icon2" to ""
                 )
 
                 val dbRef = FirebaseDatabase.getInstance().getReference("Users")

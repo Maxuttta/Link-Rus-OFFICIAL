@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -24,14 +25,16 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import com.mxn.soul.flowingdrawer_core.ElasticDrawer
 import link.download.ru.databinding.ActivityListDrawerBinding
+import java.io.File
 
 
 @Suppress("DEPRECATION")
 class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
     private lateinit var binding: ActivityListDrawerBinding
-    private val adapter = chatListAdapter(this)
+    private val adapter = chatListAdapter(this,this)
 
 //    var newList:MutableList<chat> = mutableListOf()
 //    var old:MutableList<chat> = mutableListOf<chat>()
@@ -114,6 +117,20 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
 
     private fun menuAdapter() {
         binding.apply {
+            val storage = FirebaseStorage.getInstance()
+            val storageRef = storage.reference.child("Avatars/$phone")
+            val file = File(this@Listdrawer.filesDir, "$phone")
+            if (file.exists()) {
+                val bitmap = BitmapFactory.decodeFile(file.path)
+                userAvatar.setImageBitmap(bitmap)
+            }
+            else{
+                storageRef.getFile(file).addOnSuccessListener {
+                    val bitmap = BitmapFactory.decodeFile(file.path)
+                    userAvatar.setImageBitmap(bitmap)
+                }
+            }
+
             userName.text = name
             addGroupeButton.setOnClickListener{
                 Toast.makeText(this@Listdrawer,"В следущем обновлении...",Toast.LENGTH_SHORT).show()
@@ -124,14 +141,14 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
                 } else {
                     val intent = Intent(this@Listdrawer, contact::class.java)
                     startActivity(intent)
-                    overridePendingTransition(R.anim.from_left, R.anim.to_left)
+                    overridePendingTransition(R.anim.from_right, R.anim.to_right)
                 }
 
             }
             settingsButton.setOnClickListener {
                 val intent = Intent(this@Listdrawer, Settings::class.java)
                 startActivity(intent)
-                overridePendingTransition(R.anim.from_left, R.anim.to_left)
+                overridePendingTransition(R.anim.from_right, R.anim.to_right)
             }
             savedButton.setOnClickListener {
                 val key = id
@@ -146,11 +163,11 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
                 startActivity(intent)
                 overridePendingTransition(R.anim.from_left, R.anim.to_left)
             }
-            buttonAi.setOnClickListener {
-                val intent = Intent(this@Listdrawer, ChatWithGPT::class.java)
-                startActivity(intent)
-                overridePendingTransition(R.anim.from_left, R.anim.to_left)
-            }
+//            buttonAi.setOnClickListener {
+//                val intent = Intent(this@Listdrawer, ChatWithGPT::class.java)
+//                startActivity(intent)
+//                overridePendingTransition(R.anim.from_left, R.anim.to_left)
+//            }
         }
     }
     private fun askNotificationPermission() {
@@ -420,6 +437,8 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
         Handler().postDelayed({
             dbRef.child(phone).updateChildren(chatData as Map<String, Any>)
         }, 500)
+        val sharedPref = getSharedPreferences("system", Context.MODE_PRIVATE).edit()
+        sharedPref.putString("chatIs", "false").apply()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -447,6 +466,7 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
                 "status" to "online",
                 "time" to ""
             )
+            chatIs = 0
             dbRef.child(phone).updateChildren(chatData as Map<String, Any>)
         }else{
             val dbRef = FirebaseDatabase.getInstance().getReference("Users")

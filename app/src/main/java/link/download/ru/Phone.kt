@@ -64,12 +64,15 @@ class Phone : AppCompatActivity() {
                             val pas = data?.password
                             val name = data?.name
                             val phone = data?.phone
+                            val avaUrl = data?.icon
 
                             val sharedPref = getSharedPreferences("login", Context.MODE_PRIVATE).edit()
                             sharedPref.putString("password", pas).apply()
                             sharedPref.putString("phone", phone).apply()
                             sharedPref.putString("id", id).apply()
                             sharedPref.putString("name", name).apply()
+                            sharedPref.putString("avaUrl", avaUrl).apply()
+
                             if (pas != null) {
                                 if (pas.isNotEmpty()) {
                                     val intent = Intent(this@Phone, Pasword_activity::class.java)

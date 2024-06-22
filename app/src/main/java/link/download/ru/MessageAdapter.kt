@@ -177,7 +177,7 @@ class MessageAdapter(
                 isTextVisible = false
             }
             else{
-                holder.text.visibility = View.GONE
+//                holder.text.visibility = View.GONE
                 isTextVisible = false
             }
 
@@ -449,7 +449,7 @@ class MessageAdapter(
                 isTextVisible = false
             }
             else{
-                holder.text.visibility = View.GONE
+//                holder.text.visibility = View.GONE
                 isTextVisible = false
             }
 

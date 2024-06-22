@@ -179,6 +179,7 @@
                     android:layout_marginTop="3dp"
                     android:layout_marginRight="3dp"
                     android:layout_marginBottom="3dp"
+                    android:visibility="gone"
                     android:outlineAmbientShadowColor="@color/invisible"
                     android:outlineSpotShadowColor="@color/invisible"
                     app:layout_constraintBottom_toTopOf="@+id/messageFrom"
