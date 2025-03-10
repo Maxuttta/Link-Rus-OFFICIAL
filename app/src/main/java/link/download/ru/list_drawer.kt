@@ -5,18 +5,23 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.media.Image
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.WindowInsetsController
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintSet.Layout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,7 +31,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
-import com.mxn.soul.flowingdrawer_core.ElasticDrawer
 import link.download.ru.databinding.ActivityListDrawerBinding
 import java.io.File
 
@@ -36,8 +40,6 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
     private lateinit var binding: ActivityListDrawerBinding
     private val adapter = chatListAdapter(this,this)
 
-//    var newList:MutableList<chat> = mutableListOf()
-//    var old:MutableList<chat> = mutableListOf<chat>()
 
     private lateinit var dbRef: DatabaseReference
     private lateinit var childEventListener: ChildEventListener
@@ -58,7 +60,6 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
     private lateinit var fadeOut: Animation
     private lateinit var fadeIn: Animation
     private lateinit var toBottomFadeOut: Animation
-
 
     private var isFlow = true
 
@@ -102,7 +103,6 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
             startActivity(intent)
             finish()
         } else {
-            floatingDrawer()
             loadChats()
             searchView()
             designAdapter()
@@ -132,42 +132,50 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
             }
 
             userName.text = name
-            addGroupeButton.setOnClickListener{
-                Toast.makeText(this@Listdrawer,"В следущем обновлении...",Toast.LENGTH_SHORT).show()
-            }
-            contactButton.setOnClickListener {
-                if (ContextCompat.checkSelfPermission(this@Listdrawer, android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this@Listdrawer, arrayOf(android.Manifest.permission.READ_CONTACTS), 1)
-                } else {
-                    val intent = Intent(this@Listdrawer, contact::class.java)
-                    startActivity(intent)
-                    overridePendingTransition(R.anim.from_right, R.anim.to_right)
-                }
 
+            navView.setNavigationItemSelectedListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.contacts -> {
+                        if (ContextCompat.checkSelfPermission(
+                                this@Listdrawer,
+                                android.Manifest.permission.READ_CONTACTS
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            ActivityCompat.requestPermissions(
+                                this@Listdrawer,
+                                arrayOf(android.Manifest.permission.READ_CONTACTS),
+                                1
+                            )
+                        } else {
+                            val intent = Intent(this@Listdrawer, contact::class.java)
+                            startActivity(intent)
+                            overridePendingTransition(R.anim.from_right, R.anim.to_right)
+                        }
+                    }
+
+                    R.id.settings -> {
+                        val intent = Intent(this@Listdrawer, Settings::class.java)
+                        startActivity(intent)
+                        overridePendingTransition(R.anim.from_right, R.anim.to_right)
+                    }
+
+                    R.id.saved -> {
+                        val key = id
+                        val cophone = phone
+                        val coname = name
+                        chatIs = 1
+                        val sharedPref =
+                            getSharedPreferences("chatInfo", Context.MODE_PRIVATE).edit()
+                        sharedPref.putString("chatName", coname).apply()
+                        sharedPref.putString("chatPhone", cophone).apply()
+                        sharedPref.putString("chatKey", key).apply()
+                        val intent = Intent(this@Listdrawer, chatWindow::class.java)
+                        startActivity(intent)
+                        overridePendingTransition(R.anim.from_left, R.anim.to_left)
+                    }
+                }
+                true
             }
-            settingsButton.setOnClickListener {
-                val intent = Intent(this@Listdrawer, Settings::class.java)
-                startActivity(intent)
-                overridePendingTransition(R.anim.from_right, R.anim.to_right)
-            }
-            savedButton.setOnClickListener {
-                val key = id
-                val cophone = phone
-                val coname = name
-                chatIs = 1
-                val sharedPref = getSharedPreferences("chatInfo", Context.MODE_PRIVATE).edit()
-                sharedPref.putString("chatName", coname).apply()
-                sharedPref.putString("chatPhone", cophone).apply()
-                sharedPref.putString("chatKey", key).apply()
-                val intent = Intent(this@Listdrawer, chatWindow::class.java)
-                startActivity(intent)
-                overridePendingTransition(R.anim.from_left, R.anim.to_left)
-            }
-//            buttonAi.setOnClickListener {
-//                val intent = Intent(this@Listdrawer, ChatWithGPT::class.java)
-//                startActivity(intent)
-//                overridePendingTransition(R.anim.from_left, R.anim.to_left)
-//            }
         }
     }
     private fun askNotificationPermission() {
@@ -310,7 +318,7 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
                     searchEditText.isEnabled = false
                     isFlow = true
                 } else {
-                    drawerlayout.toggleMenu()
+
                 }
             }
         }
@@ -364,31 +372,12 @@ class Listdrawer : AppCompatActivity(), chatListAdapter.Listener {
         dbRef.addChildEventListener(childEventListener)
     }
 
-    private fun floatingDrawer() {
-        binding.drawerlayout.setTouchMode(ElasticDrawer.TOUCH_MODE_FULLSCREEN)
-        binding.drawerlayout.setOnDrawerStateChangeListener(object :
-            ElasticDrawer.OnDrawerStateChangeListener {
-            override fun onDrawerStateChange(oldState: Int, newState: Int) {
-                if (newState == ElasticDrawer.STATE_CLOSED) {
-                    binding.darker.visibility = View.INVISIBLE
-                }
-                else{
-                    binding.darker.visibility = View.VISIBLE
-                }
-            }
-
-            override fun onDrawerSlide(openRatio: Float, offsetPixels: Int) {
-                Log.i("MainActivity", "openRatio=$openRatio ,offsetPixels=$offsetPixels")
-            }
-        })
-    }
-
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         super.onBackPressed()
-        if (binding.drawerlayout.isMenuVisible) {
-            binding.drawerlayout.closeMenu()
-        }
+//        if (binding.drawerlayout.isMenuVisible) {
+//            binding.drawerlayout.closeMenu()
+//        }
         if (!isFlow) {
             binding.apply {
                 val view: View? = currentFocus

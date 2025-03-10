@@ -6,11 +6,10 @@ data class UserData (
     var phone: String? = null,
     var name: String? = null,
     var icon: String? = null,
-    var priceFrom2: String? = null,
-    var rate: String? = null,
-    var meal: String? = null,
-    var currency: String? = null,
-    var cancellationPolicy: String? = null,
-    var roomType: String? = null,
-    var amenities: List<String>? = null
+    var notname: String? = null,
+    var nottitle: String? = null,
+    var status: String? = null,
+    var cophone: String? = null,
+    var icon1: String? = null,
+    var icon2: String? = null
 )
